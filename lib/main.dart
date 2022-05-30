@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:guess_word_ua/UI/game_screen.dart';
 import 'package:guess_word_ua/navigation.dart';
 import 'package:guess_word_ua/view_model/view_model.dart';
 import 'package:provider/provider.dart';
