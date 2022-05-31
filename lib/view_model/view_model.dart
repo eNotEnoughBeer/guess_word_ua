@@ -41,6 +41,7 @@ class ViewModel extends ChangeNotifier {
   late final KeyboardModel keyboardModel;
   late final GuessWordModel guessWordModel;
   late final List<String> database5letters;
+  late Timer? errorTimer;
 
   var lettersByUsage = <LetterByUsage>[];
 
@@ -108,6 +109,18 @@ class ViewModel extends ChangeNotifier {
   }
 
   void onVirtualKeyboardPressedBackspace() {
+    if (errorTimer != null) {
+      if (errorTimer!.isActive) {
+        errorTimer?.cancel();
+        var tmp = resultWord.split('');
+        lettersByUsage = List.generate(
+            guessWordLettersCount,
+            (index) =>
+                LetterByUsage(char: tmp[index], status: LetterStatus.init),
+            growable: false);
+        guessWordModel.redrawColors(lettersByUsage);
+      }
+    }
     if (keyboardIsLocked) return;
     if (resultWord.isEmpty) return;
     guessWordModel.removeLetter(); //в guessWordModel убавить букву
@@ -119,7 +132,7 @@ class ViewModel extends ChangeNotifier {
     if (resultWord.length == guessWordLettersCount) {
       if (!_isWordExists) {
         var cycle = 6;
-        Timer.periodic(
+        errorTimer = Timer.periodic(
           const Duration(milliseconds: 200),
           (Timer t) {
             if (cycle == 0) {
@@ -147,26 +160,6 @@ class ViewModel extends ChangeNotifier {
             }
           },
         );
-
-        /*var tmp = resultWord.split('');
-        lettersByUsage = List.generate(
-            guessWordLettersCount,
-            (index) =>
-                LetterByUsage(char: tmp[index], status: LetterStatus.error),
-            growable: false);
-        guessWordModel.redrawColors(lettersByUsage);
-        notifyListeners();*/
-
-        /* var tmp = resultWord.split('');
-              lettersByUsage = List.generate(
-                  guessWordLettersCount,
-                  (index) => LetterByUsage(
-                      char: tmp[index], status: LetterStatus.init),
-                  growable: false);
-              guessWordModel.redrawColors(lettersByUsage);
-              notifyListeners();*/
-
-        //TODO: слова не существует
         return;
       }
       if (_isGuessedRight) {
