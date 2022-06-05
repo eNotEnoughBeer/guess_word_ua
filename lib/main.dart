@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:guess_word_ua/navigation.dart';
-import 'package:guess_word_ua/view_model/view_model.dart';
-import 'package:provider/provider.dart';
+import 'package:guess_word_ua/services/navigation.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -17,17 +13,16 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    return ChangeNotifierProvider(
-      create: (_) => ViewModel(5),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        title: 'Вгадай слово',
-        initialRoute: Navigation.initialRoute(),
-        routes: Navigation().routes,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        fontFamily: 'game_font',
       ),
+      title: 'Вгадай слово',
+      initialRoute: Navigation.initialRoute(),
+      routes: Navigation().routes,
+      onGenerateRoute: (RouteSettings settings) =>
+          Navigation().onGenerateRoute(settings),
     );
   }
 }

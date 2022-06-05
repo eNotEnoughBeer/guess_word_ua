@@ -2,9 +2,10 @@ import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/data.dart';
-import 'package:guess_word_ua/guess_word/guess_word_model.dart';
-import 'package:guess_word_ua/virtual_keyboard/virtual_keyboard_model.dart';
+import 'package:guess_word_ua/providers/data.dart';
+import 'package:guess_word_ua/model/guess_word_model.dart';
+import 'package:guess_word_ua/services/statistics_service.dart';
+import 'package:guess_word_ua/model/virtual_keyboard_model.dart';
 
 enum GameStatus { inProcess, lose, win }
 
@@ -41,7 +42,7 @@ class ViewModel extends ChangeNotifier {
   late final KeyboardModel keyboardModel;
   late final GuessWordModel guessWordModel;
   late final List<String> database5letters;
-  late Timer? errorTimer;
+  var errorTimer = Timer(const Duration(days: 1), () {});
 
   var lettersByUsage = <LetterByUsage>[];
 
@@ -69,7 +70,7 @@ class ViewModel extends ChangeNotifier {
       }
       isFound = !apostropheFound;
     }
-    //print(result);
+    print(result);
     return result;
   }
 
@@ -80,7 +81,6 @@ class ViewModel extends ChangeNotifier {
       onBackspacePressed: onVirtualKeyboardPressedBackspace,
       onEnterPressed: onVirtualKeyboardPressedEnter,
     );
-
     guessWordModel = GuessWordModel(guessWordLettersCount);
   }
 
@@ -97,6 +97,13 @@ class ViewModel extends ChangeNotifier {
   void endGame(bool isWin) {
     keyboardIsLocked = true;
     gameStatus = isWin ? GameStatus.win : GameStatus.lose;
+    final stats = StatisticsService();
+    if (isWin) {
+      // внутрянка асинхронная, но дожидаться окончания не будем
+      stats.saveWin(guessWordLettersCount);
+    } else {
+      stats.saveLoose(guessWordLettersCount);
+    }
     notifyListeners();
   }
 
@@ -109,22 +116,21 @@ class ViewModel extends ChangeNotifier {
   }
 
   void onVirtualKeyboardPressedBackspace() {
-    if (errorTimer != null) {
-      if (errorTimer!.isActive) {
-        errorTimer?.cancel();
-        var tmp = resultWord.split('');
-        lettersByUsage = List.generate(
-            guessWordLettersCount,
-            (index) =>
-                LetterByUsage(char: tmp[index], status: LetterStatus.init),
-            growable: false);
-        guessWordModel.redrawColors(lettersByUsage);
-      }
+    if (errorTimer.isActive && resultWord.length == guessWordLettersCount) {
+      errorTimer.cancel();
+      var tmp = resultWord.split('');
+      lettersByUsage = List.generate(guessWordLettersCount,
+          (index) => LetterByUsage(char: tmp[index], status: LetterStatus.init),
+          growable: false);
+      guessWordModel.redrawColors(lettersByUsage);
     }
+
     if (keyboardIsLocked) return;
     if (resultWord.isEmpty) return;
     guessWordModel.removeLetter(); //в guessWordModel убавить букву
-    resultWord = resultWord.substring(0, resultWord.length - 1);
+    if (resultWord.isNotEmpty) {
+      resultWord = resultWord.substring(0, resultWord.length - 1);
+    }
   }
 
   void onVirtualKeyboardPressedEnter() {
@@ -156,7 +162,6 @@ class ViewModel extends ChangeNotifier {
                 guessWordModel.redrawColors(lettersByUsage);
               }
               --cycle;
-              // notifyListeners();
             }
           },
         );
@@ -172,7 +177,6 @@ class ViewModel extends ChangeNotifier {
         keyboardModel.redrawColors(lettersByUsage);
         guessWordModel.redrawColors(lettersByUsage);
         endGame(true);
-        notifyListeners();
         return;
       } else {
         getLists(); // разбили на три листа наши буковки
@@ -180,7 +184,6 @@ class ViewModel extends ChangeNotifier {
         guessWordModel.redrawColors(lettersByUsage);
         if (_isGameOver) {
           endGame(false);
-          notifyListeners();
           return;
         }
         _nextTry();

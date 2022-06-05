@@ -1,25 +1,43 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/UI/reset_button.dart';
+import 'package:guess_word_ua/UI/game_button.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/guess_word/words_widget.dart';
+import 'package:guess_word_ua/UI/guess_word/words_widget.dart';
+import 'package:guess_word_ua/UI/virtual_keyboard/keyboard.dart';
+import 'package:guess_word_ua/services/navigation.dart';
 import 'package:guess_word_ua/view_model/view_model.dart';
-import 'package:guess_word_ua/virtual_keyboard/keyboard.dart';
 import 'package:provider/provider.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key}) : super(key: key);
 
+  static Widget withProvider(int lettersCount) {
+    return ChangeNotifierProvider(
+      create: (_) => ViewModel(lettersCount),
+      child: const GameScreen(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final topPaddingHeight = max(MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height) *
-        0.05;
+    // TODO: анимашка с салютами, если выиграл
     final viewModel = context.watch<ViewModel>();
     return Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 30,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            padding: EdgeInsets.zero,
+            splashRadius: 15,
+            onPressed: () => Navigation.returnToPreviousPage(context),
+            icon: const Icon(
+              Icons.cancel_outlined,
+              color: cardBorder,
+            ),
+          ),
+        ),
         backgroundColor: backgroundColor,
         body: Column(children: [
-          SizedBox(height: topPaddingHeight),
           ChangeNotifierProvider.value(
             value: viewModel.guessWordModel,
             child: const WordsWidget(),
@@ -27,8 +45,8 @@ class GameScreen extends StatelessWidget {
           const Spacer(),
           viewModel.gameStatus == GameStatus.inProcess
               ? const SizedBox.shrink()
-              : ResetButton(
-                  status: viewModel.gameStatus,
+              : GameButton(
+                  text: 'далі',
                   onPressed: viewModel.newGame,
                 ),
           const Spacer(),

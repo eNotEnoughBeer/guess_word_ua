@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/navigation.dart';
+import 'package:guess_word_ua/services/navigation.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
   initState() {
     super.initState();
     Future<void>.delayed(const Duration(seconds: 5))
-        .then((value) => Navigation.showMainScreen(context));
+        .then((value) => Navigation.showInitialScreen(context));
   }
 
   @override

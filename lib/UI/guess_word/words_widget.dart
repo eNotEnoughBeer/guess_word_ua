@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/guess_word/guess_word_model.dart';
-import 'package:guess_word_ua/guess_word/letter_card.dart';
+import 'package:guess_word_ua/UI/guess_word/letter_card.dart';
+import 'package:guess_word_ua/model/guess_word_model.dart';
 import 'package:provider/provider.dart';
 
 class WordsWidget extends StatelessWidget {
@@ -12,7 +12,7 @@ class WordsWidget extends StatelessWidget {
     final tilesPaletteHeight = MediaQuery.of(context).size.height * 0.58;
     final wordsModel = context.watch<GuessWordModel>();
     return Container(
-        color: backgroundUnusedCard,
+        color: backgroundColor,
         height: tilesPaletteHeight,
         child: Column(children: [
           Expanded(

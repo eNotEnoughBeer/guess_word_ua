@@ -6,7 +6,7 @@ class GuessWordLetter extends ChangeNotifier {
   late String text;
   late Color color;
 
-  GuessWordLetter({this.text = '', this.color = backgroundUnusedCard});
+  GuessWordLetter({this.text = '', this.color = backgroundColor});
 
   GuessWordLetter copyWith({
     String? text,
@@ -55,7 +55,7 @@ class GuessWordModel extends ChangeNotifier {
     for (int i = 0; i < guessVariants.length; i++) {
       for (int a = 0; a < guessVariants[i].length; a++) {
         guessVariants[i][a].text = '';
-        guessVariants[i][a].color = backgroundUnusedCard;
+        guessVariants[i][a].color = backgroundColor;
         guessVariants[i][a].notifyListeners();
       }
     }

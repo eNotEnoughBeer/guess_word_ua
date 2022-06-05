@@ -1,7 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/virtual_keyboard/virtual_keyboard_model.dart';
+import 'package:guess_word_ua/model/virtual_keyboard_model.dart';
 import 'package:provider/provider.dart';
 
 class LetterKey extends StatelessWidget {
@@ -11,10 +9,8 @@ class LetterKey extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fontHeight = min(MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height) /
-        20;
-    final letter = context.watch<LetterKeyData>();
+    final fontHeight = MediaQuery.of(context).size.width / 20;
+    final letter = context.watch<KeyboardKey>();
     return Expanded(
       flex: letter.flex,
       child: Padding(
