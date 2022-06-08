@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/UI/game_button.dart';
+import 'package:guess_word_ua/UI/widgets/back_to_previous_page.dart';
+import 'package:guess_word_ua/UI/widgets/game_button.dart';
 import 'package:guess_word_ua/providers/statistics_provider.dart';
 import 'package:guess_word_ua/services/navigation.dart';
 import 'package:guess_word_ua/services/statistics_service.dart';
@@ -27,13 +28,16 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         toolbarHeight: 30,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          padding: EdgeInsets.zero,
-          splashRadius: 15,
-          onPressed: () => Navigation.returnToPreviousPage(context),
-          icon: const Icon(
-            Icons.cancel_outlined,
-            color: cardBorder,
+        leading: BackToPreviousButton(
+          radius: 12,
+          child: IconButton(
+            padding: EdgeInsets.zero,
+            splashRadius: 15,
+            onPressed: () => Navigation.returnToPreviousPage(context),
+            icon: Icon(
+              Icons.cancel_outlined,
+              color: textColor.withAlpha(170),
+            ),
           ),
         ),
       ),
@@ -46,7 +50,26 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           }
           return Column(children: [
             const SizedBox(height: 40),
-            _statisticsGrid(stats.data),
+            Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: backgroundColor,
+                  boxShadow: const [
+                    BoxShadow(
+                        color: lightShadowColor,
+                        offset: Offset(1, 4),
+                        blurRadius: 8),
+                    BoxShadow(
+                        color: shadowColor,
+                        offset: Offset(-1, -4),
+                        blurRadius: 8),
+                  ],
+                ),
+                child: _statisticsGrid(stats.data),
+              ),
+            ),
             const Spacer(),
             GameButton(
               text: 'далі',
@@ -69,7 +92,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(50.0),
+        padding: const EdgeInsets.all(8.0),
         child: Table(
           border: const TableBorder(
             horizontalInside: BorderSide(
@@ -78,7 +101,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             ),
           ),
           columnWidths: const {
-            0: FixedColumnWidth(60),
+            0: FixedColumnWidth(70),
             1: FlexColumnWidth(1),
             2: FlexColumnWidth(1),
           },

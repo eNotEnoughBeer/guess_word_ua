@@ -8,3 +8,5 @@ const cardBorder = Color(0xFF9B8C5B);
 const textColor = Color(0xFFDCD0AB);
 const absentColor = Color(0xFF2B0010);
 const backgroundColor = Color(0xFF5A3A23);
+const shadowColor = Color(0xFF201411);
+const lightShadowColor = Color(0xff947938);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
+import 'package:guess_word_ua/UI/widgets/logo_widget.dart';
 import 'package:guess_word_ua/services/navigation.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -26,11 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           children: [
             SizedBox(height: topPaddingHeight),
-            SizedBox(
-              width: topPaddingHeight * 1.3,
-              height: topPaddingHeight * 1.3,
-              child: const Image(image: AssetImage('assets/logo.png')),
-            ),
+            Logo(size: topPaddingHeight * 1.3),
             const Spacer(),
             const Text(
               'by',

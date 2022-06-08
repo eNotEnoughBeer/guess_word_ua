@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/UI/game_button.dart';
+import 'package:guess_word_ua/UI/widgets/game_button.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
 import 'package:guess_word_ua/UI/guess_word/words_widget.dart';
 import 'package:guess_word_ua/UI/virtual_keyboard/keyboard.dart';
 import 'package:guess_word_ua/services/navigation.dart';
 import 'package:guess_word_ua/view_model/view_model.dart';
 import 'package:provider/provider.dart';
+import 'widgets/back_to_previous_page.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key}) : super(key: key);
@@ -26,13 +27,16 @@ class GameScreen extends StatelessWidget {
           toolbarHeight: 30,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: IconButton(
-            padding: EdgeInsets.zero,
-            splashRadius: 15,
-            onPressed: () => Navigation.returnToPreviousPage(context),
-            icon: const Icon(
-              Icons.cancel_outlined,
-              color: cardBorder,
+          leading: BackToPreviousButton(
+            radius: 12,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              splashRadius: 15,
+              onPressed: () => Navigation.returnToPreviousPage(context),
+              icon: Icon(
+                Icons.cancel_outlined,
+                color: textColor.withAlpha(170),
+              ),
             ),
           ),
         ),

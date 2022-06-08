@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/UI/game_button.dart';
+import 'package:guess_word_ua/UI/widgets/game_button.dart';
 import 'package:guess_word_ua/services/navigation.dart';
 
 class InitialScreen extends StatelessWidget {
@@ -8,7 +8,7 @@ class InitialScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double logoSize = MediaQuery.of(context).size.width * 0.4;
+    final double logoSize = MediaQuery.of(context).size.width * 0.45;
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SafeArea(
@@ -49,15 +49,15 @@ class InitialScreen extends StatelessWidget {
                 children: [
                   GameButton(
                     text: 'досягнення',
-                    buttonWidth: MediaQuery.of(context).size.width * 0.46,
+                    buttonWidth: MediaQuery.of(context).size.width * 0.54,
                     onPressed: () => Navigation.showStatisticsScreen(context),
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.02,
+                    width: MediaQuery.of(context).size.width * 0.03,
                   ),
                   GameButton(
                     text: '?',
-                    buttonWidth: MediaQuery.of(context).size.width * 0.12,
+                    buttonWidth: MediaQuery.of(context).size.height * 0.08,
                     onPressed: () => Navigation.showRulesScreen(context),
                   ),
                 ],

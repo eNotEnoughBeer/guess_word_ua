@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/UI/game_button.dart';
+import 'package:guess_word_ua/UI/widgets/back_to_previous_page.dart';
+import 'package:guess_word_ua/UI/widgets/game_button.dart';
 import 'package:guess_word_ua/services/navigation.dart';
 
 class RulesScreen extends StatelessWidget {
@@ -18,13 +19,16 @@ class RulesScreen extends StatelessWidget {
         toolbarHeight: 30,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          padding: EdgeInsets.zero,
-          splashRadius: 15,
-          onPressed: () => Navigation.returnToPreviousPage(context),
-          icon: const Icon(
-            Icons.cancel_outlined,
-            color: unusedColor,
+        leading: BackToPreviousButton(
+          radius: 12,
+          child: IconButton(
+            padding: EdgeInsets.zero,
+            splashRadius: 15,
+            onPressed: () => Navigation.returnToPreviousPage(context),
+            icon: Icon(
+              Icons.cancel_outlined,
+              color: textColor.withAlpha(170),
+            ),
           ),
         ),
       ),
