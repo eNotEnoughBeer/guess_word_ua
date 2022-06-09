@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
             const Text(
-              'eNotEnoughBeer',
+              'NickG',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
