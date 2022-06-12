@@ -14,19 +14,14 @@ abstract class NavigationRouteNames {
 }
 
 class Navigation {
-  static String initialRoute() => NavigationRouteNames.launchScreen;
+  String get initialRoute => NavigationRouteNames.launchScreen;
 
-  final routes = <String, Widget Function(BuildContext context)>{
-    NavigationRouteNames.launchScreen: (context) => const SplashScreen(),
-    NavigationRouteNames.chooseLevel: (context) => const InitialScreen(),
-    NavigationRouteNames.statistics: (context) => const StatisticsScreen(),
-    NavigationRouteNames.rules: (context) => const RulesScreen(),
-  };
-
-  static void showInitialScreen(BuildContext context) {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        NavigationRouteNames.chooseLevel, (route) => false);
-  }
+  Map<String, Widget Function(BuildContext context)> get routes => {
+        NavigationRouteNames.launchScreen: (context) => const SplashScreen(),
+        NavigationRouteNames.chooseLevel: (context) => const InitialScreen(),
+        NavigationRouteNames.statistics: (context) => const StatisticsScreen(),
+        NavigationRouteNames.rules: (context) => const RulesScreen(),
+      };
 
   Route<Object> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -41,21 +36,31 @@ class Navigation {
         return MaterialPageRoute(builder: (context) => widget);
     }
   }
+}
 
-  static void onGameStart(BuildContext context, int count) {
+class NavigationActions {
+  static const instance = NavigationActions._();
+  const NavigationActions._();
+
+  void showInitialScreen(BuildContext context) {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        NavigationRouteNames.chooseLevel, (route) => false);
+  }
+
+  void onGameStart(BuildContext context, int count) {
     Navigator.of(context)
         .pushNamed(NavigationRouteNames.gameScreen, arguments: count);
   }
 
-  static void returnToPreviousPage(BuildContext context) {
+  void returnToPreviousPage(BuildContext context) {
     Navigator.of(context).pop();
   }
 
-  static void showStatisticsScreen(BuildContext context) {
+  void showStatisticsScreen(BuildContext context) {
     Navigator.of(context).pushNamed(NavigationRouteNames.statistics);
   }
 
-  static void showRulesScreen(BuildContext context) {
+  void showRulesScreen(BuildContext context) {
     Navigator.of(context).pushNamed(NavigationRouteNames.rules);
   }
 }

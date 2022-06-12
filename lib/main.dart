@@ -19,10 +19,9 @@ class MyApp extends StatelessWidget {
         fontFamily: 'game_font',
       ),
       title: 'Вгадай слово',
-      initialRoute: Navigation.initialRoute(),
+      initialRoute: Navigation().initialRoute,
       routes: Navigation().routes,
-      onGenerateRoute: (RouteSettings settings) =>
-          Navigation().onGenerateRoute(settings),
+      onGenerateRoute: Navigation().onGenerateRoute,
     );
   }
 }

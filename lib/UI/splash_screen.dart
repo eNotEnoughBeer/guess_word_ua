@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   initState() {
     super.initState();
     Future<void>.delayed(const Duration(seconds: 5))
-        .then((value) => Navigation.showInitialScreen(context));
+        .then((value) => NavigationActions.instance.showInitialScreen(context));
   }
 
   @override

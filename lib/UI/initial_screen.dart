@@ -25,22 +25,26 @@ class InitialScreen extends StatelessWidget {
               const Spacer(),
               GameButton(
                 text: 'assets/letter4.png',
-                onPressed: () => Navigation.onGameStart(context, 4),
+                onPressed: () =>
+                    NavigationActions.instance.onGameStart(context, 4),
               ),
               const SizedBox(height: 20),
               GameButton(
                 text: 'assets/letter5.png',
-                onPressed: () => Navigation.onGameStart(context, 5),
+                onPressed: () =>
+                    NavigationActions.instance.onGameStart(context, 5),
               ),
               const SizedBox(height: 20),
               GameButton(
                 text: 'assets/letter6.png',
-                onPressed: () => Navigation.onGameStart(context, 6),
+                onPressed: () =>
+                    NavigationActions.instance.onGameStart(context, 6),
               ),
               const SizedBox(height: 20),
               GameButton(
                 text: 'assets/letter7.png',
-                onPressed: () => Navigation.onGameStart(context, 7),
+                onPressed: () =>
+                    NavigationActions.instance.onGameStart(context, 7),
               ),
               const Spacer(),
               Row(
@@ -50,7 +54,8 @@ class InitialScreen extends StatelessWidget {
                   GameButton(
                     text: 'досягнення',
                     buttonWidth: MediaQuery.of(context).size.width * 0.54,
-                    onPressed: () => Navigation.showStatisticsScreen(context),
+                    onPressed: () => NavigationActions.instance
+                        .showStatisticsScreen(context),
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.03,
@@ -58,7 +63,8 @@ class InitialScreen extends StatelessWidget {
                   GameButton(
                     text: '?',
                     buttonWidth: MediaQuery.of(context).size.height * 0.08,
-                    onPressed: () => Navigation.showRulesScreen(context),
+                    onPressed: () =>
+                        NavigationActions.instance.showRulesScreen(context),
                   ),
                 ],
               ),

@@ -33,7 +33,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           child: IconButton(
             padding: EdgeInsets.zero,
             splashRadius: 15,
-            onPressed: () => Navigation.returnToPreviousPage(context),
+            onPressed: () =>
+                NavigationActions.instance.returnToPreviousPage(context),
             icon: Icon(
               Icons.cancel_outlined,
               color: textColor.withAlpha(170),
@@ -73,7 +74,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             const Spacer(),
             GameButton(
               text: 'далі',
-              onPressed: () => Navigation.returnToPreviousPage(context),
+              onPressed: () =>
+                  NavigationActions.instance.returnToPreviousPage(context),
             ),
             const SizedBox(height: 20),
           ]);

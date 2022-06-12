@@ -32,7 +32,8 @@ class GameScreen extends StatelessWidget {
             child: IconButton(
               padding: EdgeInsets.zero,
               splashRadius: 15,
-              onPressed: () => Navigation.returnToPreviousPage(context),
+              onPressed: () =>
+                  NavigationActions.instance.returnToPreviousPage(context),
               icon: Icon(
                 Icons.cancel_outlined,
                 color: textColor.withAlpha(170),

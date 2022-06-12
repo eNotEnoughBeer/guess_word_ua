@@ -70,7 +70,7 @@ class ViewModel extends ChangeNotifier {
       }
       isFound = !apostropheFound;
     }
-    print(result);
+    //print(result);
     return result;
   }
 
