@@ -39,6 +39,7 @@ class ViewModel extends ChangeNotifier {
   var resultWord = '';
   final int guessWordLettersCount;
   late String _wordToGuess;
+  String get answer => _wordToGuess;
   late final KeyboardModel keyboardModel;
   late final GuessWordModel guessWordModel;
   late final List<String> database5letters;

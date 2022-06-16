@@ -24,6 +24,7 @@ class GameScreen extends StatelessWidget {
     final viewModel = context.watch<ViewModel>();
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           toolbarHeight: 30,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -40,6 +41,9 @@ class GameScreen extends StatelessWidget {
               ),
             ),
           ),
+          title: viewModel.gameStatus == GameStatus.lose
+              ? Text('Відповідь: ${viewModel.answer}')
+              : null,
         ),
         backgroundColor: backgroundColor,
         body: Column(children: [
