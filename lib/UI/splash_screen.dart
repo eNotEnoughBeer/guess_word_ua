@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/UI/widgets/logo_widget.dart';
 import 'package:guess_word_ua/services/navigation.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -20,42 +19,51 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final topPaddingHeight = MediaQuery.of(context).size.height * 0.30;
+    final progressWidth = MediaQuery.of(context).size.width * 0.5;
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(height: topPaddingHeight),
-            Logo(size: topPaddingHeight * 1.3),
-            const Spacer(),
-            const Text(
-              'by',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
+      body: Stack(
+        children: [
+          const Center(
+            child: SizedBox(
+              width: 270,
+              height: 270,
+              child: Image(image: AssetImage('assets/logo.png')),
             ),
-            const Text(
-              'NickG',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+          ),
+          Center(
+            child: Column(
+              children: [
+                const Spacer(),
+                const Text(
+                  'by',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Text(
+                  'NickG',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: progressWidth,
+                  child: const LinearProgressIndicator(
+                    color: presentOnCorrectPositionColor,
+                    backgroundColor: unusedColor,
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: topPaddingHeight,
-              child: const LinearProgressIndicator(
-                color: presentOnCorrectPositionColor,
-                backgroundColor: unusedColor,
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
