@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:async';
+import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -73,14 +74,14 @@ class ViewModel extends ChangeNotifier {
         final body = document.getElementsByClassName('interpret-formula');
         if (body.isNotEmpty) {
           if (body[0].nodes.isNotEmpty) {
-            explanationStr = body[0].nodes[0].text ?? errorString;
+            explanationStr = _parseExplanationTree(body[0].nodes.toList());
           }
         }
       }
     } catch (e) {
       rethrow;
     }
-    /*if (resultString.isEmpty) { //
+    /*if (resultString.isEmpty) { // резерв
       var response = await http.Client().get(Uri.parse(
           'http://ukrlit.org/slovnyk/$word'));
       if (response.statusCode == 200) {
@@ -89,17 +90,52 @@ class ViewModel extends ChangeNotifier {
             .getElementsByClassName('word__description'); //toggle-content
         if (body.isNotEmpty) {
           if (body[0].nodes.isNotEmpty) {
-            var wantedNodes = body[0].nodes.toList();
             // вот здесь нужно добраться до каждой строки в каждом элементе
             // из этого всего собрать строку, а потом ее резать.
-            // слева - по входному слову, потом до первой точки
-            // справа - остается всё, по первую встреченную точку
-            // но пока лениво делать альтернативный поиск, если основной провалился
-            resultString = wantedNodes.join();
+            // слева - по входному слову, потом до первой точки.
+            // справа - остается всё, по первый встреченный '\n'
+            explanationStr = _parseExplanationTree(body[0].nodes.toList());
           }
         }
       }
     }*/
+  }
+
+  String _parseExplanationTree(List<dom.Node> data) {
+    var resStr = '';
+    for (dom.Node a in data) {
+      if (a.text == null) {
+        for (dom.Node b in a.nodes) {
+          if (b.text == null) {
+            for (dom.Node c in b.nodes) {
+              if (c.text != null) {
+                resStr += c.text!;
+              }
+            }
+          } else {
+            resStr += b.text!;
+          }
+        }
+      } else {
+        resStr += a.text!;
+      }
+    }
+    while (true) {
+      // убираем мусор вначале
+      var index = resStr.indexOf('\n');
+      if (index == 0) {
+        resStr = resStr.substring(1, resStr.length - 1);
+      } else {
+        break;
+      }
+    }
+    // строка начинается с букв а не с пробелов
+    resStr = resStr.trimLeft();
+    var index = resStr.indexOf('\n'); // оставляем только первый абзац
+    if (index != -1) {
+      resStr = resStr.substring(0, index - 1);
+    }
+    return resStr;
   }
 
   String _randomWordToGuess() {
