@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'dart:async';
+import 'package:html/parser.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
 import 'package:guess_word_ua/providers/data.dart';
@@ -37,6 +39,7 @@ class ViewModel extends ChangeNotifier {
   var gameStatus = GameStatus.inProcess;
   bool keyboardIsLocked = false;
   var resultWord = '';
+  var explanationStr = '';
   final int guessWordLettersCount;
   late String _wordToGuess;
   String get answer => _wordToGuess;
@@ -56,6 +59,49 @@ class ViewModel extends ChangeNotifier {
     _wordToGuess = _randomWordToGuess();
   }
 
+  Future<void> getExplanation(String word) async {
+    const errorString =
+        'Не вдалося знайти визначення слова у тлумачному словнику. '
+        'Можливо немає з\'єднання з мережою Інтернет або проблема '
+        'з тлумачним словником.';
+    explanationStr = errorString;
+    try {
+      var response = await http.Client()
+          .get(Uri.parse('https://goroh.pp.ua/Тлумачення/$word'));
+      if (response.statusCode == 200) {
+        final document = parse(response.body);
+        final body = document.getElementsByClassName('interpret-formula');
+        if (body.isNotEmpty) {
+          if (body[0].nodes.isNotEmpty) {
+            explanationStr = body[0].nodes[0].text ?? errorString;
+          }
+        }
+      }
+    } catch (e) {
+      rethrow;
+    }
+    /*if (resultString.isEmpty) { //
+      var response = await http.Client().get(Uri.parse(
+          'http://ukrlit.org/slovnyk/$word'));
+      if (response.statusCode == 200) {
+        final document = parse(response.body);
+        final body = document
+            .getElementsByClassName('word__description'); //toggle-content
+        if (body.isNotEmpty) {
+          if (body[0].nodes.isNotEmpty) {
+            var wantedNodes = body[0].nodes.toList();
+            // вот здесь нужно добраться до каждой строки в каждом элементе
+            // из этого всего собрать строку, а потом ее резать.
+            // слева - по входному слову, потом до первой точки
+            // справа - остается всё, по первую встреченную точку
+            // но пока лениво делать альтернативный поиск, если основной провалился
+            resultString = wantedNodes.join();
+          }
+        }
+      }
+    }*/
+  }
+
   String _randomWordToGuess() {
     var result = '';
     bool isFound = false;
@@ -72,6 +118,7 @@ class ViewModel extends ChangeNotifier {
       isFound = !apostropheFound;
     }
     //print(result);
+    getExplanation(result); // пока доиграет, оно ему уже и толкование найдет
     return result;
   }
 

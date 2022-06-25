@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:guess_word_ua/UI/widgets/allert_dialog.dart';
 import 'package:guess_word_ua/UI/widgets/game_button.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
 import 'package:guess_word_ua/UI/guess_word/words_widget.dart';
@@ -22,9 +24,16 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: анимашка с салютами, если выиграл
     final viewModel = context.watch<ViewModel>();
+    if (viewModel.gameStatus == GameStatus.lose) {
+      SchedulerBinding.instance
+          .addPostFrameCallback((_) => showExplanationDialog(
+                context,
+                title: 'ТЛУМАЧЕННЯ',
+                body: '${viewModel.answer} - ${viewModel.explanationStr}',
+              ));
+    }
     return Scaffold(
         appBar: AppBar(
-          centerTitle: true,
           toolbarHeight: 30,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -41,9 +50,6 @@ class GameScreen extends StatelessWidget {
               ),
             ),
           ),
-          title: viewModel.gameStatus == GameStatus.lose
-              ? Text('Відповідь: ${viewModel.answer}')
-              : null,
         ),
         backgroundColor: backgroundColor,
         body: Column(children: [
