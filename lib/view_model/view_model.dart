@@ -153,7 +153,7 @@ class ViewModel extends ChangeNotifier {
       }
       isFound = !apostropheFound;
     }
-    //print(result);
+    print(result);
     getExplanation(result); // пока доиграет, оно ему уже и толкование найдет
     return result;
   }

@@ -20,7 +20,7 @@ class InitialScreen extends StatelessWidget {
               SizedBox(
                 width: logoSize,
                 height: logoSize,
-                child: const Image(image: AssetImage('assets/logo.png')),
+                child: const Image(image: AssetImage('assets/images/logo.png')),
               ),
               const Spacer(),
               GameButton(

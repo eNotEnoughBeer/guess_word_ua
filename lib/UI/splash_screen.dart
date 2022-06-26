@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
             child: SizedBox(
               width: 270,
               height: 270,
-              child: Image(image: AssetImage('assets/logo.png')),
+              child: Image(image: AssetImage('assets/images/logo.png')),
             ),
           ),
           Center(
