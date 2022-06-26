@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
 
 class GameButton extends StatelessWidget {
@@ -25,54 +25,33 @@ class GameButton extends StatelessWidget {
     final fontHeight = min(MediaQuery.of(context).size.width,
             MediaQuery.of(context).size.height) /
         17;
-    bool textIsImagePath = text.indexOf('assets/') == 0;
+    bool textIsImagePath = text.indexOf('assets/images/') == 0;
     return SizedBox(
       width: buttonWidth,
       height: buttonHeight,
-      child: Container(
-        decoration: BoxDecoration(
+      child: NeumorphicButton(
+        onPressed: onPressed,
+        style: NeumorphicStyle(
+          shape: NeumorphicShape.flat,
+          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(100)),
+          depth: 4,
+          lightSource: LightSource.topLeft,
           color: backgroundColor,
-          borderRadius: BorderRadius.circular(buttonHeight),
-          boxShadow: const [
-            BoxShadow(
-              color: shadowColor,
-              offset: Offset(8, 3),
-              blurRadius: 6,
-              spreadRadius: 4,
-            ),
-            BoxShadow(
-              color: lightShadowColor,
-              offset: Offset(-8, -2),
-              blurRadius: 5,
-            ),
-          ],
+          shadowDarkColor: shadowColor,
+          shadowLightColor: lightShadowColor,
         ),
-        child: Material(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            //side: BorderSide(color: cardBorder, width: 3),
-            borderRadius: BorderRadius.all(Radius.circular(buttonHeight)),
-          ),
-          color: Colors.transparent,
-          child: Padding(
-            padding: const EdgeInsets.all(2.0),
-            child: InkWell(
-              borderRadius: BorderRadius.all(Radius.circular(buttonHeight)),
-              onTap: onPressed,
-              child: Center(
-                child: textIsImagePath
-                    ? Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset(text),
-                      )
-                    : Text(text,
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: fontHeight,
-                        )),
-              ),
-            ),
-          ),
+        minDistance: -1,
+        child: Center(
+          child: textIsImagePath
+              ? Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Image.asset(text),
+                )
+              : Text(text,
+                  style: TextStyle(
+                    color: cardBorder,
+                    fontSize: fontHeight,
+                  )),
         ),
       ),
     );

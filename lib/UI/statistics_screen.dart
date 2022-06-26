@@ -35,9 +35,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             splashRadius: 15,
             onPressed: () =>
                 NavigationActions.instance.returnToPreviousPage(context),
-            icon: Icon(
+            icon: const Icon(
               Icons.cancel_outlined,
-              color: textColor.withAlpha(170),
+              color: cardBorder,
             ),
           ),
         ),
@@ -61,11 +61,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     BoxShadow(
                         color: lightShadowColor,
                         offset: Offset(1, 4),
-                        blurRadius: 8),
+                        blurRadius: 3),
                     BoxShadow(
                         color: shadowColor,
                         offset: Offset(-1, -4),
-                        blurRadius: 8),
+                        blurRadius: 3),
                   ],
                 ),
                 child: _statisticsGrid(stats.data),

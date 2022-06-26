@@ -8,7 +8,7 @@ class InitialScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double logoSize = MediaQuery.of(context).size.width * 0.45;
+    final double logoSize = MediaQuery.of(context).size.width * 0.5;
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SafeArea(
@@ -23,42 +23,62 @@ class InitialScreen extends StatelessWidget {
                 child: const Image(image: AssetImage('assets/images/logo.png')),
               ),
               const Spacer(),
-              GameButton(
-                text: 'assets/letter4.png',
-                onPressed: () =>
-                    NavigationActions.instance.onGameStart(context, 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GameButton(
+                    text: 'assets/images/letter4.png',
+                    buttonWidth: MediaQuery.of(context).size.width * 0.33,
+                    onPressed: () =>
+                        NavigationActions.instance.onGameStart(context, 4),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.04,
+                  ),
+                  GameButton(
+                    text: 'assets/images/letter5.png',
+                    buttonWidth: MediaQuery.of(context).size.width * 0.333,
+                    onPressed: () =>
+                        NavigationActions.instance.onGameStart(context, 5),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
-              GameButton(
-                text: 'assets/letter5.png',
-                onPressed: () =>
-                    NavigationActions.instance.onGameStart(context, 5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GameButton(
+                    text: 'assets/images/letter6.png',
+                    buttonWidth: MediaQuery.of(context).size.width * 0.33,
+                    onPressed: () =>
+                        NavigationActions.instance.onGameStart(context, 6),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.04,
+                  ),
+                  GameButton(
+                    text: 'assets/images/letter7.png',
+                    buttonWidth: MediaQuery.of(context).size.width * 0.333,
+                    onPressed: () =>
+                        NavigationActions.instance.onGameStart(context, 7),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              GameButton(
-                text: 'assets/letter6.png',
-                onPressed: () =>
-                    NavigationActions.instance.onGameStart(context, 6),
-              ),
-              const SizedBox(height: 20),
-              GameButton(
-                text: 'assets/letter7.png',
-                onPressed: () =>
-                    NavigationActions.instance.onGameStart(context, 7),
-              ),
-              const Spacer(),
+              const SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   GameButton(
                     text: 'досягнення',
-                    buttonWidth: MediaQuery.of(context).size.width * 0.54,
+                    buttonWidth: MediaQuery.of(context).size.width * 0.53,
                     onPressed: () => NavigationActions.instance
                         .showStatisticsScreen(context),
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.03,
+                    width: MediaQuery.of(context).size.width * 0.04,
                   ),
                   GameButton(
                     text: '?',

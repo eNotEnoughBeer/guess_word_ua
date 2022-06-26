@@ -68,9 +68,9 @@ class GameScreen extends StatelessWidget {
               splashRadius: 15,
               onPressed: () =>
                   NavigationActions.instance.returnToPreviousPage(context),
-              icon: Icon(
+              icon: const Icon(
                 Icons.cancel_outlined,
-                color: textColor.withAlpha(170),
+                color: cardBorder,
               ),
             ),
           ),
