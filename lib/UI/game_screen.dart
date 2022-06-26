@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:guess_word_ua/UI/widgets/alert_dialog.dart';
 import 'package:guess_word_ua/UI/widgets/game_button.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
 import 'package:guess_word_ua/UI/guess_word/words_widget.dart';
 import 'package:guess_word_ua/UI/virtual_keyboard/keyboard.dart';
+import 'package:guess_word_ua/UI/widgets/win_animation.dart';
 import 'package:guess_word_ua/services/navigation.dart';
 import 'package:guess_word_ua/view_model/view_model.dart';
 import 'package:provider/provider.dart';
@@ -18,13 +20,44 @@ class GameScreen extends StatelessWidget {
     );
   }
 
+  void showWinAnimation(BuildContext context) {
+    OverlayEntry? entry;
+    final overlay = Overlay.of(context)!;
+    entry = OverlayEntry(builder: (context) {
+      Future.delayed(const Duration(seconds: 4), () {
+        entry?.remove();
+      });
+      return const Material(
+        color: Colors.transparent,
+        elevation: 8,
+        child: WinAnimationWidget(),
+      );
+    });
+    overlay.insert(entry);
+  }
+
+  Widget buildWinAnimation() => const Material(
+        color: Colors.transparent,
+        elevation: 8,
+        child: WinAnimationWidget(),
+      );
+
   @override
   Widget build(BuildContext context) {
-    // TODO: анимашка с салютами, если выиграл
     final viewModel = context.watch<ViewModel>();
+    if (viewModel.gameStatus == GameStatus.lose) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => showExplanationDialog(
+            context,
+            title: 'ВАРТО ЗНАТИ',
+            body: '${viewModel.answer} - ${viewModel.explanationStr}',
+          ));
+    }
+    if (viewModel.gameStatus == GameStatus.win) {
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => showWinAnimation(context));
+    }
     return Scaffold(
         appBar: AppBar(
-          centerTitle: true,
           toolbarHeight: 30,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -35,15 +68,12 @@ class GameScreen extends StatelessWidget {
               splashRadius: 15,
               onPressed: () =>
                   NavigationActions.instance.returnToPreviousPage(context),
-              icon: Icon(
+              icon: const Icon(
                 Icons.cancel_outlined,
-                color: textColor.withAlpha(170),
+                color: cardBorder,
               ),
             ),
           ),
-          title: viewModel.gameStatus == GameStatus.lose
-              ? Text('Відповідь: ${viewModel.answer}')
-              : null,
         ),
         backgroundColor: backgroundColor,
         body: Column(children: [
