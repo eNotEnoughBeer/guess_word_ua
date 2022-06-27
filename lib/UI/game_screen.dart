@@ -82,12 +82,39 @@ class GameScreen extends StatelessWidget {
             child: const WordsWidget(),
           ),
           const Spacer(),
-          viewModel.gameStatus == GameStatus.inProcess
-              ? const SizedBox.shrink()
-              : GameButton(
-                  text: 'далі',
-                  onPressed: viewModel.newGame,
-                ),
+          Visibility(
+            visible: viewModel.gameStatus != GameStatus.inProcess,
+            child: viewModel.gameStatus == GameStatus.lose
+                ? GameButton(
+                    text: 'далі',
+                    onPressed: viewModel.newGame,
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GameButton(
+                        buttonWidth: MediaQuery.of(context).size.width * 0.53,
+                        text: 'далі',
+                        onPressed: viewModel.newGame,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.04,
+                      ),
+                      GameButton(
+                        buttonWidth: MediaQuery.of(context).size.height * 0.08,
+                        text: '?',
+                        onPressed: () {
+                          showExplanationDialog(
+                            context,
+                            title: 'ВАРТО ЗНАТИ',
+                            body:
+                                '${viewModel.answer} - ${viewModel.explanationStr}',
+                          );
+                        },
+                      )
+                    ],
+                  ),
+          ),
           const Spacer(),
           ChangeNotifierProvider.value(
             value: viewModel.keyboardModel,

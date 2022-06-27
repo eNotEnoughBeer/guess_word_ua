@@ -8,7 +8,7 @@ class InitialScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double logoSize = MediaQuery.of(context).size.width * 0.5;
+    final double logoSize = MediaQuery.of(context).size.width * 0.6;
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SafeArea(
@@ -20,7 +20,9 @@ class InitialScreen extends StatelessWidget {
               SizedBox(
                 width: logoSize,
                 height: logoSize,
-                child: const Image(image: AssetImage('assets/images/logo.png')),
+                child: const Image(
+                    image: AssetImage('assets/images/logo.png'),
+                    fit: BoxFit.fill),
               ),
               const Spacer(),
               Row(
