@@ -16,8 +16,6 @@ class _WinAnimationWidgetState extends State<WinAnimationWidget>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
-    Future<void>.delayed(const Duration(milliseconds: 10))
-        .whenComplete(() => _controller.forward());
   }
 
   @override
@@ -39,6 +37,7 @@ class _WinAnimationWidgetState extends State<WinAnimationWidget>
         animate: true,
         onLoaded: (composition) {
           _controller.duration = composition.duration;
+          _controller.forward();
         },
       ),
     );

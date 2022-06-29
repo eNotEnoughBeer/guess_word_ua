@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:guess_word_ua/UI/colors_map.dart';
 import 'package:guess_word_ua/model/virtual_keyboard_model.dart';
 import 'package:provider/provider.dart';
@@ -16,54 +16,38 @@ class LetterKey extends StatelessWidget {
       flex: letter.flex,
       child: Padding(
         padding: const EdgeInsets.all(3.0),
-        child: Container(
-          decoration: letter.color == unusedColor
-              ? BoxDecoration(
-                  color: backgroundColor,
-                  borderRadius: BorderRadius.circular(4),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: shadowColor,
-                      offset: Offset(1, 1),
-                      blurRadius: 5,
-                    ),
-                    BoxShadow(
-                      color: lightShadowColor,
-                      offset: Offset(-1, -1),
-                      blurRadius: 2,
-                    ),
-                  ],
-                )
-              : null,
-          child: Material(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4)),
-            ),
+        child: NeumorphicButton(
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            letter.text == null
+                ? letter.onPressed?.call()
+                : letter.onTextInput?.call(letter.text!);
+          },
+          style: NeumorphicStyle(
+            shape: NeumorphicShape.convex,
+            boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(4)),
+            depth: 5,
+            lightSource: LightSource.topLeft,
             color: letter.color,
-            child: Padding(
-              padding: const EdgeInsets.all(1.0),
-              child: InkWell(
-                borderRadius: const BorderRadius.all(Radius.circular(4)),
-                onTap: () {
-                  letter.text == null
-                      ? letter.onPressed?.call()
-                      : letter.onTextInput?.call(letter.text!);
-                },
-                child: Center(
-                    child: letter.text == null
-                        ? Icon(
-                            letter.iconData,
-                            color: Colors.white,
-                            size: fontHeight * 1.2,
-                          )
-                        : Text(letter.text!,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: fontHeight,
-                            ))),
-              ),
-            ),
+            shadowDarkColor:
+                letter.color == unusedColor ? shadowColor : backgroundColor,
+            shadowLightColor: letter.color == unusedColor
+                ? lightShadowColor
+                : backgroundColor,
           ),
+          minDistance: -1,
+          child: Center(
+              child: letter.text == null
+                  ? Icon(
+                      letter.iconData,
+                      color: Colors.white,
+                      size: fontHeight * 1.2,
+                    )
+                  : Text(letter.text!,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: fontHeight,
+                      ))),
         ),
       ),
     );
