@@ -52,7 +52,7 @@ class GameScreen extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) => showExplanationDialog(
             context,
             title: 'ВАРТО ЗНАТИ',
-            body: '${viewModel.answer} - ${viewModel.explanationStr}',
+            body: viewModel.explanationStr,
           ));
     }
     if (viewModel.gameStatus == GameStatus.win) {
@@ -161,8 +161,7 @@ class GameScreen extends StatelessWidget {
                           showExplanationDialog(
                             context,
                             title: 'ВАРТО ЗНАТИ',
-                            body:
-                                '${viewModel.answer} - ${viewModel.explanationStr}',
+                            body: viewModel.explanationStr,
                           );
                         },
                       )

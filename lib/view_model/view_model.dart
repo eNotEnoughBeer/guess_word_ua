@@ -61,29 +61,14 @@ class ViewModel extends ChangeNotifier {
   }
 
   Future<void> getExplanation(String word) async {
-    const errorString =
-        'Не вдалося знайти визначення слова у тлумачному словнику. '
-        'Можливо немає з\'єднання з мережою Інтернет або проблема '
+    final errorString =
+        '$word - Не вдалося знайти визначення слова у тлумачному '
+        'словнику. Можливо немає з\'єднання з мережою Інтернет або проблема '
         'з тлумачним словником.';
-    explanationStr = errorString;
+    explanationStr = '';
     try {
       var response = await http.Client()
-          .get(Uri.parse('https://goroh.pp.ua/Тлумачення/$word'));
-      if (response.statusCode == 200) {
-        final document = parse(response.body);
-        final body = document.getElementsByClassName('interpret-formula');
-        if (body.isNotEmpty) {
-          if (body[0].nodes.isNotEmpty) {
-            explanationStr = _parseExplanationTree(body[0].nodes.toList());
-          }
-        }
-      }
-    } catch (e) {
-      rethrow;
-    }
-    /*if (resultString.isEmpty) { // резерв
-      var response = await http.Client().get(Uri.parse(
-          'http://ukrlit.org/slovnyk/$word'));
+          .get(Uri.parse('http://ukrlit.org/slovnyk/${word.toLowerCase()}'));
       if (response.statusCode == 200) {
         final document = parse(response.body);
         final body = document
@@ -94,11 +79,34 @@ class ViewModel extends ChangeNotifier {
             // из этого всего собрать строку, а потом ее резать.
             // слева - по входному слову, потом до первой точки.
             // справа - остается всё, по первый встреченный '\n'
+            // тут само слово уже присутствует вначале.
             explanationStr = _parseExplanationTree(body[0].nodes.toList());
           }
         }
       }
-    }*/
+      if (explanationStr.isEmpty) {
+        response = await http.Client()
+            .get(Uri.parse('https://goroh.pp.ua/Тлумачення/$word'));
+        if (response.statusCode == 200) {
+          final document = parse(response.body);
+          final body = document.getElementsByClassName('interpret-formula');
+          if (body.isNotEmpty) {
+            if (body[0].nodes.isNotEmpty) {
+              // а тут самого слова нет. нужно добавить
+              var parsedResult = _parseExplanationTree(body[0].nodes.toList());
+              explanationStr =
+                  parsedResult.isNotEmpty ? '$word - $parsedResult' : '';
+            }
+          }
+        }
+      }
+      if (explanationStr.isEmpty) {
+        explanationStr = errorString;
+      }
+    } catch (e) {
+      explanationStr = errorString;
+      rethrow;
+    }
   }
 
   String _parseExplanationTree(List<dom.Node> data) {
