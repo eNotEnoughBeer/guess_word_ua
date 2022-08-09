@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:guess_word_ua/services/navigation.dart';
-import 'package:guess_word_ua/services/rate_my_application.dart';
+import 'services/navigation.dart';
+import 'services/rate_my_application.dart';
+import 'providers/shared_prefs_singleton.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   rateMyApp.init();
+  await SharedPrefs.init();
   runApp(const MyApp());
 }
 

@@ -5,8 +5,10 @@ import 'package:guess_word_ua/view_model/view_model.dart';
 class GuessWordLetter extends ChangeNotifier {
   late String text;
   late Color color;
+  late bool isHiden;
 
-  GuessWordLetter({this.text = '', this.color = backgroundColor});
+  GuessWordLetter(
+      {this.text = '', this.color = backgroundColor, this.isHiden = false});
 
   GuessWordLetter copyWith({
     String? text,
@@ -56,6 +58,24 @@ class GuessWordModel extends ChangeNotifier {
       for (int a = 0; a < guessVariants[i].length; a++) {
         guessVariants[i][a].text = '';
         guessVariants[i][a].color = backgroundColor;
+        guessVariants[i][a].notifyListeners();
+      }
+    }
+  }
+
+  void hideLetters() {
+    for (int i = 0; i < guessVariants.length; i++) {
+      for (int a = 0; a < guessVariants[i].length; a++) {
+        guessVariants[i][a].isHiden = true;
+        guessVariants[i][a].notifyListeners();
+      }
+    }
+  }
+
+  void showLetters() {
+    for (int i = 0; i < guessVariants.length; i++) {
+      for (int a = 0; a < guessVariants[i].length; a++) {
+        guessVariants[i][a].isHiden = false;
         guessVariants[i][a].notifyListeners();
       }
     }

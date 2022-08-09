@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/model/guess_word_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../model/guess_word_model.dart';
+import '../colors_map.dart';
 
 class LetterCard extends StatelessWidget {
   const LetterCard({
@@ -30,7 +31,7 @@ class LetterCard extends StatelessWidget {
               child: Center(
                   child: Text(letter.text,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: letter.isHiden ? letter.color : Colors.white,
                         fontSize: fontSize,
                         fontWeight: FontWeight.bold,
                       ))),

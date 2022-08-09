@@ -1,4 +1,4 @@
-import 'package:guess_word_ua/providers/statistics_provider.dart';
+import '../providers/statistics_provider.dart';
 
 class StatisticsService {
   final _statisticsProvider = StatisticsDataProvider();
@@ -19,11 +19,11 @@ class StatisticsService {
     }
   }
 
-  Future<void> getFullStatistics() async {
-    _data = await Future.wait(Iterable.generate(
+  void getFullStatistics() {
+    _data = Iterable.generate(
         4,
-        (index) => _statisticsProvider
-            .getStatisticsDataForLevel(_convertIndexToEnum(index + 4))));
+        (index) => _statisticsProvider.getStatisticsDataForLevel(
+            _convertIndexToEnum(index + 4))).toList();
   }
 
   void saveWin(int lettersCount) {

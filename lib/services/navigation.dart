@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/UI/game_screen.dart';
-import 'package:guess_word_ua/UI/initial_screen.dart';
-import 'package:guess_word_ua/UI/rules_screen.dart';
-import 'package:guess_word_ua/UI/splash_screen.dart';
-import 'package:guess_word_ua/UI/statistics_screen.dart';
+import '../UI/game_screen.dart';
+import '../UI/initial_screen.dart';
+import '../UI/rules_screen.dart';
+import '../UI/splash_screen.dart';
+import '../UI/statistics_screen.dart';
 
 abstract class NavigationRouteNames {
   static const gameScreen = '/game';
@@ -18,7 +18,8 @@ class Navigation {
 
   Map<String, Widget Function(BuildContext context)> get routes => {
         NavigationRouteNames.launchScreen: (context) => const SplashScreen(),
-        NavigationRouteNames.chooseLevel: (context) => const InitialScreen(),
+        NavigationRouteNames.chooseLevel: (context) =>
+            InitialScreen.withProvider(),
         NavigationRouteNames.statistics: (context) => const StatisticsScreen(),
         NavigationRouteNames.rules: (context) => const RulesScreen(),
       };
@@ -47,8 +48,8 @@ class NavigationActions {
         NavigationRouteNames.chooseLevel, (route) => false);
   }
 
-  void onGameStart(BuildContext context, int count) {
-    Navigator.of(context)
+  Future<void> onGameStart(BuildContext context, int count) async {
+    await Navigator.of(context)
         .pushNamed(NavigationRouteNames.gameScreen, arguments: count);
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/UI/widgets/game_button.dart';
+
+import '../colors_map.dart';
+import 'game_button.dart';
 
 Future<void> showExplanationDialog(BuildContext context,
     {required String title, required String body}) {

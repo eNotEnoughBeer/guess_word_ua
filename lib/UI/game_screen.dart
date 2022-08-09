@@ -1,25 +1,31 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:guess_word_ua/UI/widgets/alert_dialog.dart';
-import 'package:guess_word_ua/UI/widgets/game_button.dart';
-import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/UI/guess_word/words_widget.dart';
-import 'package:guess_word_ua/UI/virtual_keyboard/keyboard.dart';
-import 'package:guess_word_ua/UI/widgets/win_animation.dart';
-import 'package:guess_word_ua/services/navigation.dart';
-import 'package:guess_word_ua/services/rate_my_application.dart';
-import 'package:guess_word_ua/view_model/view_model.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rate_my_app/rate_my_app.dart';
-import 'widgets/back_to_previous_page.dart';
+import 'package:screenshot/screenshot.dart';
 import 'dart:io';
+import '../UI/widgets/alert_dialog.dart';
+import '../UI/widgets/game_button.dart';
+import '../UI/colors_map.dart';
+import '../UI/guess_word/words_widget.dart';
+import '../UI/virtual_keyboard/keyboard.dart';
+import '../UI/widgets/win_animation.dart';
+import '../services/navigation.dart';
+import '../services/rate_my_application.dart';
+import '../view_model/view_model.dart';
+import 'widgets/back_to_previous_page.dart';
+import 'widgets/share_dialog.dart';
 
 class GameScreen extends StatelessWidget {
-  const GameScreen({Key? key}) : super(key: key);
+  GameScreen({Key? key}) : super(key: key);
 
+  final controller = ScreenshotController();
   static Widget withProvider(int lettersCount) {
+    bool isDayGame = lettersCount < 0 ? true : false;
+    if (isDayGame) lettersCount *= -1;
     return ChangeNotifierProvider(
-      create: (_) => ViewModel(lettersCount),
-      child: const GameScreen(),
+      create: (_) => ViewModel(lettersCount, isDayGame),
+      child: GameScreen(),
     );
   }
 
@@ -45,6 +51,32 @@ class GameScreen extends StatelessWidget {
         child: WinAnimationWidget(),
       );
 
+  void popUpShareWindow(BuildContext context) {
+    // подготовить скриншот,
+    DateFormat dateFormat = DateFormat('dd.MM.yyyy');
+    final dateAsStr = dateFormat.format(DateTime.now());
+    Future.delayed(const Duration(seconds: 4), () {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+        final viewModel = context.read<ViewModel>();
+        viewModel.hideLetters();
+        Future.delayed(const Duration(milliseconds: 100))
+            .then(
+              (_) => controller
+                  .capture(pixelRatio: pixelRatio)
+                  .then((bytes) async {
+                await showShareDialog(
+                  context,
+                  title: 'Гра дня: $dateAsStr',
+                  bodyBytes: bytes!,
+                );
+              }),
+            )
+            .then((_) => viewModel.showLetters());
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<ViewModel>();
@@ -58,8 +90,11 @@ class GameScreen extends StatelessWidget {
     if (viewModel.gameStatus == GameStatus.win) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showWinAnimation(context);
+        if (viewModel.isGameOfDay) {
+          popUpShareWindow(context);
+        }
         if (rateMyApp.shouldOpenDialog) {
-          Future.delayed(const Duration(seconds: 4), () {
+          Future.delayed(const Duration(seconds: 5), () {
             rateMyApp.showStarRateDialog(
               context,
               title: 'Подобається гра?',
@@ -133,24 +168,42 @@ class GameScreen extends StatelessWidget {
         body: Column(children: [
           ChangeNotifierProvider.value(
             value: viewModel.guessWordModel,
-            child: const WordsWidget(),
+            child: Screenshot(
+              controller: controller,
+              child: const WordsWidget(),
+            ),
           ),
           const Spacer(),
           Visibility(
             visible: viewModel.gameStatus != GameStatus.inProcess,
             child: viewModel.gameStatus == GameStatus.lose
-                ? GameButton(
-                    text: 'далі',
-                    onPressed: viewModel.newGame,
-                  )
+                ? viewModel.isGameOfDay
+                    ? GameButton(
+                        text: 'назад',
+                        onPressed: () => NavigationActions.instance
+                            .returnToPreviousPage(context),
+                      )
+                    : GameButton(
+                        text: 'далі',
+                        onPressed: viewModel.newGame,
+                      )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      GameButton(
-                        buttonWidth: MediaQuery.of(context).size.width * 0.53,
-                        text: 'далі',
-                        onPressed: viewModel.newGame,
-                      ),
+                      viewModel.isGameOfDay
+                          ? GameButton(
+                              buttonWidth:
+                                  MediaQuery.of(context).size.width * 0.53,
+                              text: 'назад',
+                              onPressed: () => NavigationActions.instance
+                                  .returnToPreviousPage(context),
+                            )
+                          : GameButton(
+                              buttonWidth:
+                                  MediaQuery.of(context).size.width * 0.53,
+                              text: 'далі',
+                              onPressed: viewModel.newGame,
+                            ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.04,
                       ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/UI/virtual_keyboard/letter_key.dart';
-import 'package:guess_word_ua/model/virtual_keyboard_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../model/virtual_keyboard_model.dart';
+import 'letter_key.dart';
 
 class Keyboard extends StatelessWidget {
   const Keyboard({Key? key}) : super(key: key);

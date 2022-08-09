@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/UI/colors_map.dart';
+
+import '../colors_map.dart';
 
 class BackToPreviousButton extends StatelessWidget {
   final double radius;

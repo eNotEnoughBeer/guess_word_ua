@@ -1,10 +1,12 @@
 import 'dart:math';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:guess_word_ua/UI/colors_map.dart';
+
+import '../colors_map.dart';
 
 class GameButton extends StatelessWidget {
   final double? width;
   final double? height;
+  final bool? isBold;
   final String text;
   final VoidCallback? onPressed;
 
@@ -13,9 +15,11 @@ class GameButton extends StatelessWidget {
       this.onPressed,
       double? buttonWidth,
       double? buttonHeight,
+      bool? isBoldText,
       required this.text})
       : width = buttonWidth,
         height = buttonHeight,
+        isBold = isBoldText,
         super(key: key);
 
   @override
@@ -30,6 +34,9 @@ class GameButton extends StatelessWidget {
       width: buttonWidth,
       height: buttonHeight,
       child: NeumorphicButton(
+        padding: (isBold != null && isBold == true)
+            ? const EdgeInsets.only(bottom: 10.0)
+            : const EdgeInsets.all(10.0),
         onPressed: onPressed,
         style: NeumorphicStyle(
           shape: NeumorphicShape.flat,
@@ -50,7 +57,12 @@ class GameButton extends StatelessWidget {
               : Text(text,
                   style: TextStyle(
                     color: cardBorder,
-                    fontSize: fontHeight,
+                    fontSize: (isBold != null && isBold == true)
+                        ? fontHeight * 1.4
+                        : fontHeight,
+                    fontWeight: (isBold != null && isBold == true)
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   )),
         ),
       ),
