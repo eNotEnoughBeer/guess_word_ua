@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/services/navigation.dart';
+import '../services/navigation.dart';
+import 'colors_map.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);

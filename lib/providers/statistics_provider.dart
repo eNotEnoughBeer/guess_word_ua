@@ -1,4 +1,4 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'shared_prefs_singleton.dart';
 
 enum GameLevel { lvl4, lvl5, lvl6, lvl7 }
 
@@ -17,8 +17,6 @@ abstract class StatisticsKeyField {
 }
 
 class StatisticsDataProvider {
-  final _sharedPreferences = SharedPreferences.getInstance();
-
   String _getKey(GameLevel level) {
     switch (level) {
       case GameLevel.lvl4:
@@ -45,23 +43,22 @@ class StatisticsDataProvider {
     }
   }
 
-  Future<LevelData> getStatisticsDataForLevel(GameLevel level) async {
-    final int win =
-        (await _sharedPreferences).getInt('${_getKey(level)}_win') ?? 0;
-    final int loose =
-        (await _sharedPreferences).getInt('${_getKey(level)}_loose') ?? 0;
+  LevelData getStatisticsDataForLevel(GameLevel level) {
+    final instance = SharedPrefs.instance;
+    final int win = instance.getInt('${_getKey(level)}_win') ?? 0;
+    final int loose = instance.getInt('${_getKey(level)}_loose') ?? 0;
     return LevelData(level: _convertEnumToIndex(level), loose: loose, win: win);
   }
 
   Future<void> increaseStatisticsDataForWin(GameLevel level) async {
-    final int win =
-        (await _sharedPreferences).getInt('${_getKey(level)}_win') ?? 0;
-    (await _sharedPreferences).setInt('${_getKey(level)}_win', win + 1);
+    final instance = SharedPrefs.instance;
+    final int win = instance.getInt('${_getKey(level)}_win') ?? 0;
+    await instance.setInt('${_getKey(level)}_win', win + 1);
   }
 
   Future<void> increaseStatisticsDataForLoose(GameLevel level) async {
-    final int win =
-        (await _sharedPreferences).getInt('${_getKey(level)}_loose') ?? 0;
-    (await _sharedPreferences).setInt('${_getKey(level)}_loose', win + 1);
+    final instance = SharedPrefs.instance;
+    final int win = instance.getInt('${_getKey(level)}_loose') ?? 0;
+    await instance.setInt('${_getKey(level)}_loose', win + 1);
   }
 }

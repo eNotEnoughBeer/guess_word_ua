@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/UI/guess_word/letter_card.dart';
-import 'package:guess_word_ua/model/guess_word_model.dart';
 import 'package:provider/provider.dart';
+import '../../model/guess_word_model.dart';
+import '../colors_map.dart';
+import 'letter_card.dart';
 
 class WordsWidget extends StatelessWidget {
   const WordsWidget({Key? key}) : super(key: key);

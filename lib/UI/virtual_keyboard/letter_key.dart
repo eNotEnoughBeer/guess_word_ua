@@ -1,7 +1,8 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/model/virtual_keyboard_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../model/virtual_keyboard_model.dart';
+import '../colors_map.dart';
 
 class LetterKey extends StatelessWidget {
   const LetterKey({

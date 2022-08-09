@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/UI/widgets/back_to_previous_page.dart';
-import 'package:guess_word_ua/UI/widgets/game_button.dart';
-import 'package:guess_word_ua/services/navigation.dart';
+
+import '../services/navigation.dart';
+import 'colors_map.dart';
+import 'widgets/back_to_previous_page.dart';
+import 'widgets/game_button.dart';
 
 class RulesScreen extends StatelessWidget {
   const RulesScreen({Key? key}) : super(key: key);

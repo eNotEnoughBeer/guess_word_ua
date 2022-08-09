@@ -4,11 +4,13 @@ import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/providers/data.dart';
-import 'package:guess_word_ua/model/guess_word_model.dart';
-import 'package:guess_word_ua/services/statistics_service.dart';
-import 'package:guess_word_ua/model/virtual_keyboard_model.dart';
+import 'package:intl/intl.dart';
+import '../UI/colors_map.dart';
+import '../providers/data.dart';
+import '../model/guess_word_model.dart';
+import '../services/statistics_service.dart';
+import '../services/word_of_day_service.dart';
+import '../model/virtual_keyboard_model.dart';
 
 enum GameStatus { inProcess, lose, win }
 
@@ -42,6 +44,7 @@ class ViewModel extends ChangeNotifier {
   var resultWord = '';
   var explanationStr = '';
   final int guessWordLettersCount;
+  final bool isGameOfDay;
   late String _wordToGuess;
   String get answer => _wordToGuess;
   late final KeyboardModel keyboardModel;
@@ -51,14 +54,67 @@ class ViewModel extends ChangeNotifier {
 
   var lettersByUsage = <LetterByUsage>[];
 
-  ViewModel(this.guessWordLettersCount) {
+  ViewModel(this.guessWordLettersCount, this.isGameOfDay) {
     _attachAll();
     database5letters = database
         .where((element) => element.length == guessWordLettersCount)
         .map((e) => e.toUpperCase())
         .toList(growable: false);
-    _wordToGuess = _randomWordToGuess();
+    if (!isGameOfDay) {
+      _wordToGuess = _randomWordToGuess();
+    } else {
+      // если кнопка нажалась, значит я могу играть.
+      // "уже сыграл сегодня" обрабатывается в другом месте
+      _wordToGuess = _getWordForToday();
+      // получить текущую дату
+      DateFormat dateFormat = DateFormat('dd.MM.yyyy');
+      final dateAsStr = dateFormat.format(DateTime.now());
+      final dayGameData = GameOfDayService();
+      dayGameData.getGameData();
+      if (dayGameData.gameData.date.compareTo(dateAsStr) == 0 &&
+          !dayGameData.gameData.gameStatus) {
+        // дата та же, значит сюда чувак уже заходил
+        // dayGameData.gameData.row1-row5 превратить в предложенные слова
+        // и отобразить на карточках
+        updateLineFromSave(dayGameData.gameData.row1);
+        updateLineFromSave(dayGameData.gameData.row2);
+        updateLineFromSave(dayGameData.gameData.row3);
+        updateLineFromSave(dayGameData.gameData.row4);
+        updateLineFromSave(dayGameData.gameData.row5);
+      } else {
+        if (dayGameData.gameData.date.isNotEmpty) {
+          // подпортить статистику. пользователь же не доиграл
+          // значит он тупо сдался, если дата осталась
+          if (dayGameData.getGameStatus() != true) {
+            dayGameData.getFullStatistics();
+            dayGameData.statisticsData = dayGameData.statisticsData.copyWith(
+                totalPlayed: dayGameData.statisticsData.totalPlayed + 1);
+            dayGameData.updateStatistics();
+          }
+          dayGameData.clearGameData();
+        }
+        dayGameData.gameData = dayGameData.gameData.copyWith(date: dateAsStr);
+        dayGameData.saveGameDataForThisTry(); // сохранить дату
+      }
+    }
   }
+
+  void updateLineFromSave(String guessWord) {
+    if (guessWord.isNotEmpty) {
+      resultWord = guessWord;
+      for (var i = 0; i < resultWord.length; i++) {
+        String element = resultWord[i];
+        guessWordModel.addLetter(element);
+      }
+      getLists(); // разбили на три листа наши буковки
+      keyboardModel.redrawColors(lettersByUsage);
+      guessWordModel.redrawColors(lettersByUsage);
+      _nextTry();
+    }
+  }
+
+  void hideLetters() => guessWordModel.hideLetters();
+  void showLetters() => guessWordModel.showLetters();
 
   Future<void> getExplanation(String word) async {
     final errorString =
@@ -146,22 +202,23 @@ class ViewModel extends ChangeNotifier {
     return resStr;
   }
 
+  String _getWordForToday() {
+    String result = '';
+    final now = DateTime.now();
+    final seed = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
+    // тут получить слово из 5 букв
+    int randomNumber = Random(seed).nextInt(database5letters.length);
+    result = database5letters[randomNumber];
+    //print(result);
+    getExplanation(result); // пока доиграет, оно ему уже и толкование найдет
+    return result;
+  }
+
   String _randomWordToGuess() {
-    var result = '';
-    bool isFound = false;
-    while (!isFound) {
-      int randomNumber = Random().nextInt(database5letters.length);
-      result = database5letters[randomNumber];
-      var apostropheFound = false;
-      for (var i = 0; i < result.length; i++) {
-        if (result[i] == '`') {
-          apostropheFound = true;
-          break;
-        }
-      }
-      isFound = !apostropheFound;
-    }
-    print(result);
+    String result = '';
+    int randomNumber = Random().nextInt(database5letters.length);
+    result = database5letters[randomNumber];
+    //print(result);
     getExplanation(result); // пока доиграет, оно ему уже и толкование найдет
     return result;
   }
@@ -189,13 +246,59 @@ class ViewModel extends ChangeNotifier {
   void endGame(bool isWin) {
     keyboardIsLocked = true;
     gameStatus = isWin ? GameStatus.win : GameStatus.lose;
-    final stats = StatisticsService();
-    if (isWin) {
-      // внутрянка асинхронная, но дожидаться окончания не будем
-      stats.saveWin(guessWordLettersCount);
-    } else {
-      stats.saveLoose(guessWordLettersCount);
+    if (!isGameOfDay) {
+      final stats = StatisticsService();
+      if (isWin) {
+        // внутрянка асинхронная, но дожидаться окончания не будем
+        stats.saveWin(guessWordLettersCount);
+      } else {
+        stats.saveLoose(guessWordLettersCount);
+      }
+    } else if (isGameOfDay) {
+      final dayGameData = GameOfDayService();
+      dayGameData.getFullStatistics();
+      dayGameData.statisticsData = dayGameData.statisticsData
+          .copyWith(totalPlayed: dayGameData.statisticsData.totalPlayed + 1);
+
+      if (isWin) {
+        dayGameData.statisticsData = dayGameData.statisticsData
+            .copyWith(win: dayGameData.statisticsData.win + 1);
+
+        switch (guessWordModel.currentTry) {
+          case 0:
+            dayGameData.statisticsData = dayGameData.statisticsData
+                .copyWith(try1: dayGameData.statisticsData.try1 + 1);
+            break;
+          case 1:
+            dayGameData.statisticsData = dayGameData.statisticsData
+                .copyWith(try2: dayGameData.statisticsData.try2 + 1);
+            break;
+          case 2:
+            dayGameData.statisticsData = dayGameData.statisticsData
+                .copyWith(try3: dayGameData.statisticsData.try3 + 1);
+            break;
+          case 3:
+            dayGameData.statisticsData = dayGameData.statisticsData
+                .copyWith(try4: dayGameData.statisticsData.try4 + 1);
+            break;
+          case 4:
+            dayGameData.statisticsData = dayGameData.statisticsData
+                .copyWith(try5: dayGameData.statisticsData.try5 + 1);
+            break;
+          case 5:
+            dayGameData.statisticsData = dayGameData.statisticsData
+                .copyWith(try6: dayGameData.statisticsData.try6 + 1);
+            break;
+          default:
+            break;
+        }
+      }
+      dayGameData.updateStatistics();
+      dayGameData.getGameData();
+      dayGameData.gameData = dayGameData.gameData.copyWith(status: true);
+      dayGameData.saveGameDataForThisTry();
     }
+
     notifyListeners();
   }
 
@@ -271,6 +374,41 @@ class ViewModel extends ChangeNotifier {
         endGame(true);
         return;
       } else {
+        if (isGameOfDay) {
+          // добавить слово resultWord в shared_prefs
+          final dayGameData = GameOfDayService();
+          dayGameData.getGameData();
+          switch (guessWordModel.currentTry) {
+            case 0:
+              dayGameData.gameData =
+                  dayGameData.gameData.copyWith(row1: resultWord);
+              break;
+            case 1:
+              dayGameData.gameData =
+                  dayGameData.gameData.copyWith(row2: resultWord);
+              break;
+            case 2:
+              dayGameData.gameData =
+                  dayGameData.gameData.copyWith(row3: resultWord);
+              break;
+            case 3:
+              dayGameData.gameData =
+                  dayGameData.gameData.copyWith(row4: resultWord);
+              break;
+            case 4:
+              dayGameData.gameData =
+                  dayGameData.gameData.copyWith(row5: resultWord);
+              break;
+            case 5:
+              dayGameData.gameData =
+                  dayGameData.gameData.copyWith(row6: resultWord);
+              break;
+            default:
+              break;
+          }
+          dayGameData.gameData = dayGameData.gameData.copyWith(status: false);
+          dayGameData.saveGameDataForThisTry();
+        }
         getLists(); // разбили на три листа наши буковки
         keyboardModel.redrawColors(lettersByUsage);
         guessWordModel.redrawColors(lettersByUsage);

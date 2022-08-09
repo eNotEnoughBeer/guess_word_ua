@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guess_word_ua/UI/colors_map.dart';
-import 'package:guess_word_ua/view_model/view_model.dart';
+import '../UI/colors_map.dart';
+import '../view_model/view_model.dart';
 
 class KeyboardKey extends ChangeNotifier {
   final String? text;
