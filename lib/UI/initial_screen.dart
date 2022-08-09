@@ -3,7 +3,6 @@ import 'package:flutter_countdown_timer/index.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../services/navigation.dart';
-import '../services/word_of_day_service.dart';
 import '../view_model/vm_initial_screen.dart';
 import 'colors_map.dart';
 import 'widgets/game_button.dart';
