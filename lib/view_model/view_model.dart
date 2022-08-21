@@ -11,6 +11,7 @@ import '../model/guess_word_model.dart';
 import '../services/statistics_service.dart';
 import '../services/word_of_day_service.dart';
 import '../model/virtual_keyboard_model.dart';
+import '../providers/day_word_dictionary.dart';
 
 enum GameStatus { inProcess, lose, win }
 
@@ -49,17 +50,19 @@ class ViewModel extends ChangeNotifier {
   String get answer => _wordToGuess;
   late final KeyboardModel keyboardModel;
   late final GuessWordModel guessWordModel;
-  late final List<String> database5letters;
+  late final List<String> currentRoundDatabase;
   var errorTimer = Timer(const Duration(days: 1), () {});
 
   var lettersByUsage = <LetterByUsage>[];
 
   ViewModel(this.guessWordLettersCount, this.isGameOfDay) {
     _attachAll();
-    database5letters = database
-        .where((element) => element.length == guessWordLettersCount)
-        .map((e) => e.toUpperCase())
-        .toList(growable: false);
+    currentRoundDatabase = isGameOfDay
+        ? dictionary.map((e) => e.toUpperCase()).toList(growable: false)
+        : database
+            .where((element) => element.length == guessWordLettersCount)
+            .map((e) => e.toUpperCase())
+            .toList(growable: false);
     if (!isGameOfDay) {
       _wordToGuess = _randomWordToGuess();
     } else {
@@ -207,18 +210,18 @@ class ViewModel extends ChangeNotifier {
     final now = DateTime.now();
     final seed = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
     // тут получить слово из 5 букв
-    int randomNumber = Random(seed).nextInt(database5letters.length);
-    result = database5letters[randomNumber];
-    //print(result);
+    int randomNumber = Random(seed).nextInt(currentRoundDatabase.length);
+    result = currentRoundDatabase[randomNumber];
+    debugPrint(result);
     getExplanation(result); // пока доиграет, оно ему уже и толкование найдет
     return result;
   }
 
   String _randomWordToGuess() {
     String result = '';
-    int randomNumber = Random().nextInt(database5letters.length);
-    result = database5letters[randomNumber];
-    //print(result);
+    int randomNumber = Random().nextInt(currentRoundDatabase.length);
+    result = currentRoundDatabase[randomNumber];
+    debugPrint(result);
     getExplanation(result); // пока доиграет, оно ему уже и толкование найдет
     return result;
   }
@@ -426,7 +429,7 @@ class ViewModel extends ChangeNotifier {
     resultWord = '';
   }
 
-  bool get _isWordExists => database5letters.contains(resultWord);
+  bool get _isWordExists => database.contains(resultWord.toLowerCase());
   bool get _isGuessedRight => _wordToGuess.compareTo(resultWord) == 0;
   bool get _isGameOver => guessWordModel.isGameOver;
 
