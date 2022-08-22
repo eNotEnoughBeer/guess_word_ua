@@ -48,8 +48,7 @@ class InitialScreen extends StatelessWidget {
                   GameButton(
                     text: 'assets/images/letter4.png',
                     buttonWidth: MediaQuery.of(context).size.width * 0.33,
-                    onPressed: () =>
-                        NavigationActions.instance.onGameStart(context, 4),
+                    onPressed: () => NavigationActions.instance.onGameStart(4),
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.04,
@@ -57,8 +56,7 @@ class InitialScreen extends StatelessWidget {
                   GameButton(
                     text: 'assets/images/letter5.png',
                     buttonWidth: MediaQuery.of(context).size.width * 0.33,
-                    onPressed: () =>
-                        NavigationActions.instance.onGameStart(context, 5),
+                    onPressed: () => NavigationActions.instance.onGameStart(5),
                   ),
                 ],
               ),
@@ -70,8 +68,7 @@ class InitialScreen extends StatelessWidget {
                   GameButton(
                     text: 'assets/images/letter6.png',
                     buttonWidth: MediaQuery.of(context).size.width * 0.33,
-                    onPressed: () =>
-                        NavigationActions.instance.onGameStart(context, 6),
+                    onPressed: () => NavigationActions.instance.onGameStart(6),
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.04,
@@ -79,8 +76,7 @@ class InitialScreen extends StatelessWidget {
                   GameButton(
                     text: 'assets/images/letter7.png',
                     buttonWidth: MediaQuery.of(context).size.width * 0.33,
-                    onPressed: () =>
-                        NavigationActions.instance.onGameStart(context, 7),
+                    onPressed: () => NavigationActions.instance.onGameStart(7),
                   ),
                 ],
               ),
@@ -92,8 +88,8 @@ class InitialScreen extends StatelessWidget {
                   GameButton(
                     text: 'досягнення',
                     buttonWidth: MediaQuery.of(context).size.width * 0.53,
-                    onPressed: () => NavigationActions.instance
-                        .showStatisticsScreen(context),
+                    onPressed: () =>
+                        NavigationActions.instance.showStatisticsScreen(),
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.04,
@@ -102,7 +98,7 @@ class InitialScreen extends StatelessWidget {
                     text: '?',
                     buttonWidth: MediaQuery.of(context).size.height * 0.08,
                     onPressed: () =>
-                        NavigationActions.instance.showRulesScreen(context),
+                        NavigationActions.instance.showRulesScreen(),
                   ),
                 ],
               ),
@@ -174,7 +170,7 @@ class _DayGameButtonState extends State<DayGameButton> {
           buttonWidth: MediaQuery.of(context).size.width * 0.7,
           onPressed: viewModel.canPlay
               ? () async {
-                  await NavigationActions.instance.onGameStart(context, -5);
+                  await NavigationActions.instance.onGameStart(-5);
                   viewModel.checkAccess();
                 }
               : () {},

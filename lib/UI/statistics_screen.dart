@@ -56,8 +56,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           child: IconButton(
             padding: EdgeInsets.zero,
             splashRadius: 15,
-            onPressed: () =>
-                NavigationActions.instance.returnToPreviousPage(context),
+            onPressed: () => NavigationActions.instance.returnToPreviousPage(),
             icon: const Icon(
               Icons.cancel_outlined,
               color: cardBorder,
@@ -146,8 +145,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           const Spacer(),
           GameButton(
             text: 'далі',
-            onPressed: () =>
-                NavigationActions.instance.returnToPreviousPage(context),
+            onPressed: () => NavigationActions.instance.returnToPreviousPage(),
           ),
           const SizedBox(height: 20),
         ],

@@ -25,8 +25,7 @@ class RulesScreen extends StatelessWidget {
           child: IconButton(
             padding: EdgeInsets.zero,
             splashRadius: 15,
-            onPressed: () =>
-                NavigationActions.instance.returnToPreviousPage(context),
+            onPressed: () => NavigationActions.instance.returnToPreviousPage(),
             icon: const Icon(
               Icons.cancel_outlined,
               color: cardBorder,
@@ -68,7 +67,7 @@ class RulesScreen extends StatelessWidget {
               child: GameButton(
                 text: 'далі',
                 onPressed: () =>
-                    NavigationActions.instance.returnToPreviousPage(context),
+                    NavigationActions.instance.returnToPreviousPage(),
               ),
             ),
             const SizedBox(height: 10),

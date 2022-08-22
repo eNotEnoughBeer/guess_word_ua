@@ -68,8 +68,7 @@ class _ShareDialog extends StatelessWidget {
             imagePath.writeAsBytesSync(img.encodePng(resized));
             await Share.shareFiles(
               [imagePath.path],
-              text: '''
-                $title
+              text: '''$title
                 https://play.google.com/store/apps/details?id=com.gonini.guess_word_ua''',
             );
 

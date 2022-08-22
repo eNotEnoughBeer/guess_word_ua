@@ -80,6 +80,10 @@ class GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<ViewModel>();
+    if (viewModel.isGameOfDay && viewModel.gameStatus != GameStatus.inProcess) {
+      // не важно, выиграл или проиграл. главное, что это игра дня и она окончена
+      //...
+    }
     if (viewModel.gameStatus == GameStatus.lose) {
       WidgetsBinding.instance.addPostFrameCallback((_) => showExplanationDialog(
             context,
@@ -112,8 +116,9 @@ class GameScreen extends StatelessWidget {
                               .callEvent(RateMyAppEventType.rateButtonPressed);
                         }
 
-                        Navigator.pop<RateMyAppDialogButton>(
-                            context, RateMyAppDialogButton.rate);
+                        NavigationActions.navigatorKey.currentState
+                            ?.pop<RateMyAppDialogButton>(
+                                RateMyAppDialogButton.rate);
                       },
                       style: NeumorphicStyle(
                         shape: NeumorphicShape.flat,
@@ -156,7 +161,7 @@ class GameScreen extends StatelessWidget {
               padding: EdgeInsets.zero,
               splashRadius: 15,
               onPressed: () =>
-                  NavigationActions.instance.returnToPreviousPage(context),
+                  NavigationActions.instance.returnToPreviousPage(),
               icon: const Icon(
                 Icons.cancel_outlined,
                 color: cardBorder,
@@ -180,8 +185,8 @@ class GameScreen extends StatelessWidget {
                 ? viewModel.isGameOfDay
                     ? GameButton(
                         text: 'назад',
-                        onPressed: () => NavigationActions.instance
-                            .returnToPreviousPage(context),
+                        onPressed: () =>
+                            NavigationActions.instance.returnToPreviousPage(),
                       )
                     : GameButton(
                         text: 'далі',
@@ -196,7 +201,7 @@ class GameScreen extends StatelessWidget {
                                   MediaQuery.of(context).size.width * 0.53,
                               text: 'назад',
                               onPressed: () => NavigationActions.instance
-                                  .returnToPreviousPage(context),
+                                  .returnToPreviousPage(),
                             )
                           : GameButton(
                               buttonWidth:

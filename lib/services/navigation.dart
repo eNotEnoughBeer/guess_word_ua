@@ -5,6 +5,7 @@ import '../UI/rules_screen.dart';
 import '../UI/splash_screen.dart';
 import '../UI/statistics_screen.dart';
 
+/// ## just route names
 abstract class NavigationRouteNames {
   static const gameScreen = '/game';
   static const launchScreen = '/splash';
@@ -39,29 +40,42 @@ class Navigation {
   }
 }
 
+/// ## helper-class for navigation
 class NavigationActions {
   static const instance = NavigationActions._();
   const NavigationActions._();
+  // don't forget to add
+  // MaterialApp(
+  // navigatorKey: NavigationActions.navigatorKey, //<-!!!
+  //...)
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
-  void showInitialScreen(BuildContext context) {
-    Navigator.of(context).pushNamedAndRemoveUntil(
+  /// ### move from splash to main screen
+  void showInitialScreen() {
+    navigatorKey.currentState?.pushNamedAndRemoveUntil(
         NavigationRouteNames.chooseLevel, (route) => false);
   }
 
-  Future<void> onGameStart(BuildContext context, int count) async {
-    await Navigator.of(context)
-        .pushNamed(NavigationRouteNames.gameScreen, arguments: count);
+  /// ### start the game. [count] - letters quantity
+  /// if [count == -5], that will be the game of the day
+  Future<void> onGameStart(int count) async {
+    await navigatorKey.currentState
+        ?.pushNamed(NavigationRouteNames.gameScreen, arguments: count);
   }
 
-  void returnToPreviousPage(BuildContext context) {
-    Navigator.of(context).pop();
+  /// ### just back to previous page
+  void returnToPreviousPage() {
+    navigatorKey.currentState?.pop();
   }
 
-  void showStatisticsScreen(BuildContext context) {
-    Navigator.of(context).pushNamed(NavigationRouteNames.statistics);
+  /// ### move to statistics screen
+  void showStatisticsScreen() {
+    navigatorKey.currentState?.pushNamed(NavigationRouteNames.statistics);
   }
 
-  void showRulesScreen(BuildContext context) {
-    Navigator.of(context).pushNamed(NavigationRouteNames.rules);
+  /// ### move to rules screen
+  void showRulesScreen() {
+    navigatorKey.currentState?.pushNamed(NavigationRouteNames.rules);
   }
 }
