@@ -90,7 +90,6 @@ class NotificationService {
     } else {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
-    debugPrint('timer: $scheduledDate');
     return scheduledDate;
   }
 }
