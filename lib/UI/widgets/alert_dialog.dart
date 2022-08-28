@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../services/navigation.dart';
 import '../colors_map.dart';
 import 'game_button.dart';
 
@@ -47,7 +47,7 @@ class _ExDialog extends StatelessWidget {
           buttonWidth: MediaQuery.of(context).size.width * 0.3,
           text: 'ок',
           onPressed: () {
-            Navigator.of(context).pop();
+            NavigationActions.instance.returnToPreviousPage();
           },
         ),
       ],

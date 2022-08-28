@@ -11,6 +11,7 @@ import '../UI/guess_word/words_widget.dart';
 import '../UI/virtual_keyboard/keyboard.dart';
 import '../UI/widgets/win_animation.dart';
 import '../services/navigation.dart';
+import '../services/notification_service.dart';
 import '../services/rate_my_application.dart';
 import '../view_model/view_model.dart';
 import 'widgets/back_to_previous_page.dart';
@@ -69,6 +70,7 @@ class GameScreen extends StatelessWidget {
                   context,
                   title: 'Гра дня: $dateAsStr',
                   bodyBytes: bytes!,
+                  totalTries: viewModel.guessedWordFromXTries + 1,
                 );
               }),
             )
@@ -81,8 +83,9 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<ViewModel>();
     if (viewModel.isGameOfDay && viewModel.gameStatus != GameStatus.inProcess) {
-      // не важно, выиграл или проиграл. главное, что это игра дня и она окончена
-      //...
+      // no matter if the user wins or looses. the game is just over
+      // so, it's time to set notifications for next day
+      NotificationService().scheduleNotifications();
     }
     if (viewModel.gameStatus == GameStatus.lose) {
       WidgetsBinding.instance.addPostFrameCallback((_) => showExplanationDialog(

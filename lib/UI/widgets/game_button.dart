@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-
 import '../colors_map.dart';
 
 class GameButton extends StatelessWidget {

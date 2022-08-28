@@ -224,6 +224,7 @@ class DayWordDataProvider {
     instance.remove('${DayWordKeyField.guessIndex}_6');
   }
 
+  /// ### get a game status for current game
   bool getGameStatus() {
     final instance = SharedPrefs.instance;
     return instance.getBool(DayWordKeyField.gameStatus) ?? false;

@@ -1,7 +1,9 @@
 import 'shared_prefs_singleton.dart';
 
+// just 4 group names for statistics
 enum GameLevel { lvl4, lvl5, lvl6, lvl7 }
 
+// immutable class for one stats level keeping
 class LevelData {
   final int level;
   final int loose;
@@ -9,6 +11,7 @@ class LevelData {
   LevelData({required this.level, required this.loose, required this.win});
 }
 
+/// ## shared preferences field names
 abstract class StatisticsKeyField {
   static const statistics4 = 'level_4';
   static const statistics5 = 'level_5';
@@ -16,7 +19,9 @@ abstract class StatisticsKeyField {
   static const statistics7 = 'level_7';
 }
 
+/// ## statistics provider class
 class StatisticsDataProvider {
+  /// ### enum to string converter
   String _getKey(GameLevel level) {
     switch (level) {
       case GameLevel.lvl4:
@@ -30,6 +35,7 @@ class StatisticsDataProvider {
     }
   }
 
+  /// ### enum to index converter
   int _convertEnumToIndex(GameLevel level) {
     switch (level) {
       case GameLevel.lvl4:
@@ -43,6 +49,7 @@ class StatisticsDataProvider {
     }
   }
 
+  /// ### get [LeveData] for needed [GameLevel]
   LevelData getStatisticsDataForLevel(GameLevel level) {
     final instance = SharedPrefs.instance;
     final int win = instance.getInt('${_getKey(level)}_win') ?? 0;
@@ -50,12 +57,14 @@ class StatisticsDataProvider {
     return LevelData(level: _convertEnumToIndex(level), loose: loose, win: win);
   }
 
+  /// ### update statistics for chosen [GameLevel] if the user wins the game
   Future<void> increaseStatisticsDataForWin(GameLevel level) async {
     final instance = SharedPrefs.instance;
     final int win = instance.getInt('${_getKey(level)}_win') ?? 0;
     await instance.setInt('${_getKey(level)}_win', win + 1);
   }
 
+  /// ### update statistics for chosen [GameLevel] if the user looses the game
   Future<void> increaseStatisticsDataForLoose(GameLevel level) async {
     final instance = SharedPrefs.instance;
     final int win = instance.getInt('${_getKey(level)}_loose') ?? 0;

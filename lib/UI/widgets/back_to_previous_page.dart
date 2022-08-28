@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../colors_map.dart';
 
 class BackToPreviousButton extends StatelessWidget {

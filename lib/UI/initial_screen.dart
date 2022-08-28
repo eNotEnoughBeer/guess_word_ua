@@ -19,9 +19,6 @@ class InitialScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*final dayGameData = GameOfDayService();
-    dayGameData.clearGameData();
-    print('done');*/
     final double logoSize = MediaQuery.of(context).size.width * 0.6;
     return Scaffold(
       backgroundColor: backgroundColor,

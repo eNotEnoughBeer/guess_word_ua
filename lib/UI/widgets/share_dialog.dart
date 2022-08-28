@@ -4,30 +4,38 @@ import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../services/navigation.dart';
 import '../colors_map.dart';
 import 'game_button.dart';
 
 Future<void> showShareDialog(BuildContext context,
-    {required String title, required Uint8List bodyBytes}) {
+    {required String title,
+    required Uint8List bodyBytes,
+    required int totalTries}) {
   return showDialog<void>(
     context: context,
     builder: (context) => _ShareDialog(
       title: title,
       body: bodyBytes,
+      count: totalTries,
     ),
   );
 }
 
 class _ShareDialog extends StatelessWidget {
-  const _ShareDialog({
+  final controller = ScreenshotController();
+  _ShareDialog({
     Key? key,
     required this.title,
     required this.body,
+    required this.count,
   }) : super(key: key);
 
   final String title;
   final Uint8List body;
+  final int count;
 
   @override
   Widget build(BuildContext context) {
@@ -45,34 +53,82 @@ class _ShareDialog extends StatelessWidget {
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       backgroundColor: backgroundColor,
-      title: Text(title),
-      content: Image.memory(body),
+      title: const Text('ПЕРЕМОГА!'),
+      content: Screenshot(
+        controller: controller,
+        child: Container(
+          color: backgroundColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.star,
+                      color: presentColor,
+                      size: 40,
+                    ),
+                    Icon(
+                      count <= 4 ? Icons.star : Icons.star_border,
+                      color: presentColor,
+                      size: 40,
+                    ),
+                    Icon(
+                      count <= 2 ? Icons.star : Icons.star_border,
+                      color: presentColor,
+                      size: 40,
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                  child: Text(title,
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width / 21,
+                        color: cardBorder,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ),
+                Image.memory(body),
+              ],
+            ),
+          ),
+        ),
+      ),
       actions: [
         GameButton(
           buttonWidth: MediaQuery.of(context).size.width * 0.5,
           text: 'поділитися',
           onPressed: () async {
+            final pixelRatio = MediaQuery.of(context).devicePixelRatio;
             var status = await Permission.storage.status;
             if (status.isDenied) {
               status = await Permission.storage.request();
             }
             if (!status.isGranted) {
-              Navigator.of(context).pop();
+              NavigationActions.instance.returnToPreviousPage();
               return;
             }
             final directory = await getApplicationDocumentsDirectory();
             final imagePath = await File('${directory.path}/game.png').create();
 
-            img.Image image = img.decodeImage(body)!;
-            img.Image resized = img.copyResize(image, width: 400);
-            imagePath.writeAsBytesSync(img.encodePng(resized));
-            await Share.shareFiles(
-              [imagePath.path],
-              text: '''$title
-                https://play.google.com/store/apps/details?id=com.gonini.guess_word_ua''',
-            );
-
-            Navigator.of(context).pop();
+            controller.capture(pixelRatio: pixelRatio).then((bytes) async {
+              img.Image image = img.decodeImage(bytes!)!;
+              img.Image resized = img.copyResize(image, width: 400);
+              imagePath.writeAsBytesSync(img.encodePng(resized));
+              await Share.shareFiles(
+                [imagePath.path],
+                text:
+                    'https://play.google.com/store/apps/details?id=com.gonini.guess_word_ua',
+              );
+              NavigationActions.instance.returnToPreviousPage();
+            });
           },
         ),
       ],

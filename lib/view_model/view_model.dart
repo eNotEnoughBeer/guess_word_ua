@@ -17,6 +17,7 @@ enum GameStatus { inProcess, lose, win }
 
 enum LetterStatus { onCorrectPlace, usedButNotHere, useless, error, init }
 
+/// ## helper class for logic needs
 class LetterByUsage {
   final String char;
   final LetterStatus status;
@@ -39,6 +40,7 @@ class LetterByUsage {
   }
 }
 
+/// ## ChangeNotifier + logic class of the game
 class ViewModel extends ChangeNotifier {
   var gameStatus = GameStatus.inProcess;
   bool keyboardIsLocked = false;
@@ -52,7 +54,7 @@ class ViewModel extends ChangeNotifier {
   late final GuessWordModel guessWordModel;
   late final List<String> currentRoundDatabase;
   var errorTimer = Timer(const Duration(days: 1), () {});
-
+  int get guessedWordFromXTries => guessWordModel.currentTry;
   var lettersByUsage = <LetterByUsage>[];
 
   ViewModel(this.guessWordLettersCount, this.isGameOfDay) {
@@ -66,28 +68,27 @@ class ViewModel extends ChangeNotifier {
     if (!isGameOfDay) {
       _wordToGuess = _randomWordToGuess();
     } else {
-      // если кнопка нажалась, значит я могу играть.
-      // "уже сыграл сегодня" обрабатывается в другом месте
+      // if a can press a button (im here :) ), so, i can play.
+      // "already played" processed elsewhere
       _wordToGuess = _getWordForToday();
-      // получить текущую дату
+      // get a current date
       DateFormat dateFormat = DateFormat('dd.MM.yyyy');
       final dateAsStr = dateFormat.format(DateTime.now());
       final dayGameData = GameOfDayService();
       dayGameData.getGameData();
       if (dayGameData.gameData.date.compareTo(dateAsStr) == 0 &&
           !dayGameData.gameData.gameStatus) {
-        // дата та же, значит сюда чувак уже заходил
-        // dayGameData.gameData.row1-row5 превратить в предложенные слова
-        // и отобразить на карточках
-        updateLineFromSave(dayGameData.gameData.row1);
-        updateLineFromSave(dayGameData.gameData.row2);
-        updateLineFromSave(dayGameData.gameData.row3);
-        updateLineFromSave(dayGameData.gameData.row4);
-        updateLineFromSave(dayGameData.gameData.row5);
+        // date is the same, so user played but to to the end
+        // dayGameData.gameData.row1-row5 restore data
+        _updateLineFromSave(dayGameData.gameData.row1);
+        _updateLineFromSave(dayGameData.gameData.row2);
+        _updateLineFromSave(dayGameData.gameData.row3);
+        _updateLineFromSave(dayGameData.gameData.row4);
+        _updateLineFromSave(dayGameData.gameData.row5);
       } else {
         if (dayGameData.gameData.date.isNotEmpty) {
-          // подпортить статистику. пользователь же не доиграл
-          // значит он тупо сдался, если дата осталась
+          // anti cheat :). user played but didn't loose or win
+          // just gave up after several tries. so, he looses
           if (dayGameData.getGameStatus() != true) {
             dayGameData.getFullStatistics();
             dayGameData.statisticsData = dayGameData.statisticsData.copyWith(
@@ -97,29 +98,34 @@ class ViewModel extends ChangeNotifier {
           dayGameData.clearGameData();
         }
         dayGameData.gameData = dayGameData.gameData.copyWith(date: dateAsStr);
-        dayGameData.saveGameDataForThisTry(); // сохранить дату
+        dayGameData.saveGameDataForThisTry(); // save the date
       }
     }
   }
 
-  void updateLineFromSave(String guessWord) {
+  /// ### "game of the day" update game field after reopen the game
+  void _updateLineFromSave(String guessWord) {
     if (guessWord.isNotEmpty) {
       resultWord = guessWord;
       for (var i = 0; i < resultWord.length; i++) {
         String element = resultWord[i];
         guessWordModel.addLetter(element);
       }
-      getLists(); // разбили на три листа наши буковки
+      _getLists(); // split letter to lists
       keyboardModel.redrawColors(lettersByUsage);
       guessWordModel.redrawColors(lettersByUsage);
       _nextTry();
     }
   }
 
+  /// ### hide letter before screenshot
   void hideLetters() => guessWordModel.hideLetters();
+
+  /// ### update visibility after screenshot
   void showLetters() => guessWordModel.showLetters();
 
-  Future<void> getExplanation(String word) async {
+  /// ### get a meaning of the word from internet dictionaries
+  Future<void> _getExplanation(String word) async {
     final errorString =
         '$word - Не вдалося знайти визначення слова у тлумачному '
         'словнику. Можливо немає з\'єднання з мережою Інтернет або проблема '
@@ -130,15 +136,9 @@ class ViewModel extends ChangeNotifier {
           .get(Uri.parse('http://ukrlit.org/slovnyk/${word.toLowerCase()}'));
       if (response.statusCode == 200) {
         final document = parse(response.body);
-        final body = document
-            .getElementsByClassName('word__description'); //toggle-content
+        final body = document.getElementsByClassName('word__description');
         if (body.isNotEmpty) {
           if (body[0].nodes.isNotEmpty) {
-            // вот здесь нужно добраться до каждой строки в каждом элементе
-            // из этого всего собрать строку, а потом ее резать.
-            // слева - по входному слову, потом до первой точки.
-            // справа - остается всё, по первый встреченный '\n'
-            // тут само слово уже присутствует вначале.
             explanationStr = _parseExplanationTree(body[0].nodes.toList());
           }
         }
@@ -151,7 +151,7 @@ class ViewModel extends ChangeNotifier {
           final body = document.getElementsByClassName('interpret-formula');
           if (body.isNotEmpty) {
             if (body[0].nodes.isNotEmpty) {
-              // а тут самого слова нет. нужно добавить
+              // something was found. let's find out what we get
               var parsedResult = _parseExplanationTree(body[0].nodes.toList());
               explanationStr =
                   parsedResult.isNotEmpty ? '$word - $parsedResult' : '';
@@ -168,6 +168,7 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
+  /// ### interpretations parsing
   String _parseExplanationTree(List<dom.Node> data) {
     var resStr = '';
     for (dom.Node a in data) {
@@ -188,7 +189,7 @@ class ViewModel extends ChangeNotifier {
       }
     }
     while (true) {
-      // убираем мусор вначале
+      // remove the garbage from the beginning
       var index = resStr.indexOf('\n');
       if (index == 0) {
         resStr = resStr.substring(1, resStr.length - 1);
@@ -196,36 +197,39 @@ class ViewModel extends ChangeNotifier {
         break;
       }
     }
-    // строка начинается с букв а не с пробелов
+    // remove empty spaces
     resStr = resStr.trimLeft();
-    var index = resStr.indexOf('\n'); // оставляем только первый абзац
+    var index = resStr.indexOf('\n'); // just first paragraph is enough
     if (index != -1) {
       resStr = resStr.substring(0, index - 1);
     }
     return resStr;
   }
 
+  /// ### get a word of the day
   String _getWordForToday() {
     String result = '';
     final now = DateTime.now();
     final seed = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
-    // тут получить слово из 5 букв
+    // let's get the 5 letters word
     int randomNumber = Random(seed).nextInt(currentRoundDatabase.length);
     result = currentRoundDatabase[randomNumber];
     debugPrint(result);
-    getExplanation(result); // пока доиграет, оно ему уже и толкование найдет
+    _getExplanation(result); // no need to use await
     return result;
   }
 
+  /// ### get a random word to guess
   String _randomWordToGuess() {
     String result = '';
     int randomNumber = Random().nextInt(currentRoundDatabase.length);
     result = currentRoundDatabase[randomNumber];
     debugPrint(result);
-    getExplanation(result); // пока доиграет, оно ему уже и толкование найдет
+    _getExplanation(result);
     return result;
   }
 
+  // helper functions for class initialization
   void _attachAll() {
     keyboardModel = KeyboardModel(
       color: backgroundColor,
@@ -236,6 +240,7 @@ class ViewModel extends ChangeNotifier {
     guessWordModel = GuessWordModel(guessWordLettersCount);
   }
 
+  /// ### start new game without quiting the game page
   void newGame() {
     _wordToGuess = _randomWordToGuess();
     resultWord = '';
@@ -246,13 +251,13 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void endGame(bool isWin) {
+  /// ### everything has its end, the game hase the same feature :)
+  void _endGame(bool isWin) {
     keyboardIsLocked = true;
     gameStatus = isWin ? GameStatus.win : GameStatus.lose;
     if (!isGameOfDay) {
       final stats = StatisticsService();
       if (isWin) {
-        // внутрянка асинхронная, но дожидаться окончания не будем
         stats.saveWin(guessWordLettersCount);
       } else {
         stats.saveLoose(guessWordLettersCount);
@@ -305,14 +310,16 @@ class ViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// ### press a letter button on game keyboard
   void onVirtualKeyboardPressedLetter(String currentLetter) {
     if (keyboardIsLocked) return;
     if (resultWord.length < guessWordLettersCount) {
       resultWord += currentLetter;
-      guessWordModel.addLetter(currentLetter); //в guessWordModel добавить букву
+      guessWordModel.addLetter(currentLetter); //ad a letter to guessWordModel
     }
   }
 
+  /// ### press a Backspace button on game keyboard
   void onVirtualKeyboardPressedBackspace() {
     if (errorTimer.isActive && resultWord.length == guessWordLettersCount) {
       errorTimer.cancel();
@@ -325,16 +332,18 @@ class ViewModel extends ChangeNotifier {
 
     if (keyboardIsLocked) return;
     if (resultWord.isEmpty) return;
-    guessWordModel.removeLetter(); //в guessWordModel убавить букву
+    guessWordModel.removeLetter(); //delete last letter from guessWordModel
     if (resultWord.isNotEmpty) {
       resultWord = resultWord.substring(0, resultWord.length - 1);
     }
   }
 
+  /// ### pressed an Enter button on game keyboard
   void onVirtualKeyboardPressedEnter() {
     if (keyboardIsLocked) return;
     if (resultWord.length == guessWordLettersCount) {
       if (!_isWordExists) {
+        // some blinking animations
         var cycle = 6;
         errorTimer = Timer.periodic(
           const Duration(milliseconds: 200),
@@ -374,11 +383,11 @@ class ViewModel extends ChangeNotifier {
             growable: false);
         keyboardModel.redrawColors(lettersByUsage);
         guessWordModel.redrawColors(lettersByUsage);
-        endGame(true);
+        _endGame(true);
         return;
       } else {
         if (isGameOfDay) {
-          // добавить слово resultWord в shared_prefs
+          // add a word resultWord to shared_prefs
           final dayGameData = GameOfDayService();
           dayGameData.getGameData();
           switch (guessWordModel.currentTry) {
@@ -412,11 +421,11 @@ class ViewModel extends ChangeNotifier {
           dayGameData.gameData = dayGameData.gameData.copyWith(status: false);
           dayGameData.saveGameDataForThisTry();
         }
-        getLists(); // разбили на три листа наши буковки
+        _getLists(); // split word to lists
         keyboardModel.redrawColors(lettersByUsage);
         guessWordModel.redrawColors(lettersByUsage);
         if (_isGameOver) {
-          endGame(false);
+          _endGame(false);
           return;
         }
         _nextTry();
@@ -424,6 +433,7 @@ class ViewModel extends ChangeNotifier {
     }
   }
 
+  /// ### just a new guess try starts
   void _nextTry() {
     guessWordModel.nextTry();
     resultWord = '';
@@ -433,17 +443,18 @@ class ViewModel extends ChangeNotifier {
   bool get _isGuessedRight => _wordToGuess.compareTo(resultWord) == 0;
   bool get _isGameOver => guessWordModel.isGameOver;
 
-  void getLists() {
+  /// ### filling "colored" lists for guess
+  void _getLists() {
     var listCorrect = _wordToGuess.split('');
     var listVariant = resultWord.split('');
-    // сначала заполним все LetterStatus.useless
+    // first af all, init all with LetterStatus.useless
     lettersByUsage = List.generate(
         guessWordLettersCount,
         (index) => LetterByUsage(
             char: listVariant[index], status: LetterStatus.useless),
         growable: false);
 
-    // заполняем точные попадания LetterStatus.onCorrectPlace
+    // fill "green" LetterStatus.onCorrectPlace
     for (var i = 0; i < guessWordLettersCount; i++) {
       if (listVariant[i] == listCorrect[i]) {
         lettersByUsage[i] =
@@ -452,7 +463,7 @@ class ViewModel extends ChangeNotifier {
       }
     }
 
-    // а теперь есть, но не на своем месте LetterStatus.usedButNotHere
+    // it's time to fill "orange" LetterStatus.usedButNotHere
     for (var i = 0; i < guessWordLettersCount; i++) {
       var pos = listCorrect.indexOf(listVariant[i]);
       if (lettersByUsage[i].status != LetterStatus.onCorrectPlace &&

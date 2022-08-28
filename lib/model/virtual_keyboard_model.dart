@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../UI/colors_map.dart';
 import '../view_model/view_model.dart';
 
+/// ## ChangeNotifier class for one letter button on keyboard
 class KeyboardKey extends ChangeNotifier {
   final String? text;
   final IconData iconData;
@@ -57,14 +58,17 @@ class KeyboardKey extends ChangeNotifier {
       onPressed.hashCode;
 }
 
+/// ### ChangeNotifier class for a keyboard widget
 class KeyboardModel extends ChangeNotifier {
-  final Color color;
-  final List<KeyboardKey> _keyboard;
+  final Color color; // background color (not a keyboard key)
+  final List<KeyboardKey> _keyboard; // all of the keyboard letters
   List<KeyboardKey> get keyboard => _keyboard;
 
-  final ValueSetter<String>? onTextInput;
-  final VoidCallback? onBackspacePressed;
-  final VoidCallback? onEnterPressed;
+  final ValueSetter<String>?
+      onTextInput; // callback for "letter" button pressed
+  final VoidCallback?
+      onBackspacePressed; // callback for "backspace" button pressed
+  final VoidCallback? onEnterPressed; // callback for "Enter" button pressed
   KeyboardModel({
     this.color = backgroundColor,
     this.onTextInput,
@@ -82,6 +86,7 @@ class KeyboardModel extends ChangeNotifier {
           }
         }, growable: false);
 
+  // nothing interesting just an Ukrainian keyboard, without "`" letter :)
   static List<KeyboardKey> standardKeyboardUA = <KeyboardKey>[
     KeyboardKey(text: 'Й'),
     KeyboardKey(text: 'Ц'),
@@ -120,6 +125,7 @@ class KeyboardModel extends ChangeNotifier {
     KeyboardKey(iconData: Icons.subdirectory_arrow_left, flex: 3),
   ];
 
+  /// ### just drop the button colors to initial state
   void resetKeyboard() {
     for (int i = 0; i < _keyboard.length; i++) {
       if (_keyboard[i].color != unusedColor) {
@@ -129,6 +135,7 @@ class KeyboardModel extends ChangeNotifier {
     }
   }
 
+  /// ### fill keyboard keys background according to [currentWord]
   void redrawColors(List<LetterByUsage> currentWord) {
     for (var e in currentWord) {
       var index = _keyboard.indexWhere((element) => element.text == e.char);
