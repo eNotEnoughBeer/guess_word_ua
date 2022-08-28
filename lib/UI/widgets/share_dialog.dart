@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../services/navigation.dart';
@@ -107,15 +106,9 @@ class _ShareDialog extends StatelessWidget {
           text: 'поділитися',
           onPressed: () async {
             final pixelRatio = MediaQuery.of(context).devicePixelRatio;
-            var status = await Permission.storage.status;
-            if (status.isDenied) {
-              status = await Permission.storage.request();
-            }
-            if (!status.isGranted) {
-              NavigationActions.instance.returnToPreviousPage();
-              return;
-            }
-            final directory = await getApplicationDocumentsDirectory();
+            // don't need in READ_EXTERNAL_STORAGE/WRITE_EXTERNAL_STORAGE
+            // cause we work with getTemporaryDirectory (getApplicationSupportDirectory)
+            final directory = await getTemporaryDirectory();
             final imagePath = await File('${directory.path}/game.png').create();
 
             controller.capture(pixelRatio: pixelRatio).then((bytes) async {
