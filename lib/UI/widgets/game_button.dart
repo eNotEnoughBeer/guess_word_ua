@@ -57,7 +57,7 @@ class GameButton extends StatelessWidget {
                   style: TextStyle(
                     color: cardBorder,
                     fontSize: (isBold != null && isBold == true)
-                        ? fontHeight * 1.4
+                        ? fontHeight * 1.2
                         : fontHeight,
                     fontWeight: (isBold != null && isBold == true)
                         ? FontWeight.bold
