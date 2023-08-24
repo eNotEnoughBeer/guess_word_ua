@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+
 import '../../services/navigation.dart';
 import '../colors_map.dart';
 import 'game_button.dart';
 
-Future<void> showExplanationDialog(BuildContext context,
-    {required String title, required String body}) {
+Future<void> showExplanationDialog(BuildContext context, {required String title, required String body}) {
   return showDialog<void>(
     context: context,
     builder: (context) => _ExDialog(
@@ -43,12 +43,15 @@ class _ExDialog extends StatelessWidget {
       title: Text(title),
       content: Text(body),
       actions: [
-        GameButton(
-          buttonWidth: MediaQuery.of(context).size.width * 0.3,
-          text: 'ок',
-          onPressed: () {
-            NavigationActions.instance.returnToPreviousPage();
-          },
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GameButton(
+            buttonWidth: MediaQuery.of(context).size.width * 0.3,
+            text: 'ок',
+            onPressed: () {
+              NavigationActions.instance.returnToPreviousPage();
+            },
+          ),
         ),
       ],
       actionsPadding: const EdgeInsets.symmetric(horizontal: 0.0),

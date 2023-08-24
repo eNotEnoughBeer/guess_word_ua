@@ -1,20 +1,23 @@
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:screenshot/screenshot.dart';
-import 'dart:io';
-import '../UI/widgets/alert_dialog.dart';
-import '../UI/widgets/game_button.dart';
+
 import '../UI/colors_map.dart';
 import '../UI/guess_word/words_widget.dart';
 import '../UI/virtual_keyboard/keyboard.dart';
+import '../UI/widgets/alert_dialog.dart';
+import '../UI/widgets/game_button.dart';
 import '../UI/widgets/win_animation.dart';
 import '../services/navigation.dart';
 import '../services/notification_service.dart';
 import '../services/rate_my_application.dart';
 import '../view_model/view_model.dart';
 import 'widgets/back_to_previous_page.dart';
+import 'widgets/neumorphic_button.dart';
 import 'widgets/share_dialog.dart';
 
 class GameScreen extends StatelessWidget {
@@ -32,7 +35,7 @@ class GameScreen extends StatelessWidget {
 
   void showWinAnimation(BuildContext context) {
     OverlayEntry? entry;
-    final overlay = Overlay.of(context)!;
+    final overlay = Overlay.of(context);
     entry = OverlayEntry(builder: (context) {
       Future.delayed(const Duration(seconds: 4), () {
         entry?.remove();
@@ -63,9 +66,7 @@ class GameScreen extends StatelessWidget {
         viewModel.hideLetters();
         Future.delayed(const Duration(milliseconds: 100))
             .then(
-              (_) => controller
-                  .capture(pixelRatio: pixelRatio)
-                  .then((bytes) async {
+              (_) => controller.capture(pixelRatio: pixelRatio).then((bytes) async {
                 await showShareDialog(
                   context,
                   title: 'Гра дня: $dateAsStr',
@@ -105,35 +106,25 @@ class GameScreen extends StatelessWidget {
             rateMyApp.showStarRateDialog(
               context,
               title: 'Подобається гра?',
-              message:
-                  'Поділіться своїми враженнями від гри у Google PlayStore',
+              message: 'Поділіться своїми враженнями від гри у Google PlayStore',
               actionsBuilder: (context, stars) {
                 return [
                   SizedBox(
                     width: 100,
                     child: NeumorphicButton(
-                      onPressed: () async {
+                      onPress: () async {
                         final result = await rateMyApp.launchStore();
                         if (result == LaunchStoreResult.storeOpened) {
-                          await rateMyApp
-                              .callEvent(RateMyAppEventType.rateButtonPressed);
+                          await rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
                         }
 
                         NavigationActions.navigatorKey.currentState
-                            ?.pop<RateMyAppDialogButton>(
-                                RateMyAppDialogButton.rate);
+                            ?.pop<RateMyAppDialogButton>(RateMyAppDialogButton.rate);
                       },
-                      style: NeumorphicStyle(
-                        shape: NeumorphicShape.flat,
-                        boxShape: NeumorphicBoxShape.roundRect(
-                            BorderRadius.circular(100)),
-                        depth: 3,
-                        lightSource: LightSource.topLeft,
-                        color: const Color(0xFFEFEFEF),
-                        shadowDarkColor: Colors.black,
-                        shadowLightColor: Colors.black12,
-                      ),
-                      minDistance: -2,
+                      backgroundColor: const Color(0xFFEFEFEF),
+                      bottomRightShadowColor: Colors.black,
+                      topLeftShadowColor: Colors.black12,
+                      borderRadius: 100,
                       child: const Center(child: Text('ОК')),
                     ),
                   ),
@@ -146,8 +137,7 @@ class GameScreen extends StatelessWidget {
                 messagePadding: EdgeInsets.only(bottom: 20),
               ),
               starRatingOptions: const StarRatingOptions(initialRating: 3),
-              onDismissed: () =>
-                  rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed),
+              onDismissed: () => rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed),
             );
           });
         }
@@ -163,8 +153,7 @@ class GameScreen extends StatelessWidget {
             child: IconButton(
               padding: EdgeInsets.zero,
               splashRadius: 15,
-              onPressed: () =>
-                  NavigationActions.instance.returnToPreviousPage(),
+              onPressed: () => NavigationActions.instance.returnToPreviousPage(),
               icon: const Icon(
                 Icons.cancel_outlined,
                 color: cardBorder,
@@ -188,8 +177,7 @@ class GameScreen extends StatelessWidget {
                 ? viewModel.isGameOfDay
                     ? GameButton(
                         text: 'назад',
-                        onPressed: () =>
-                            NavigationActions.instance.returnToPreviousPage(),
+                        onPressed: () => NavigationActions.instance.returnToPreviousPage(),
                       )
                     : GameButton(
                         text: 'далі',
@@ -200,15 +188,12 @@ class GameScreen extends StatelessWidget {
                     children: [
                       viewModel.isGameOfDay
                           ? GameButton(
-                              buttonWidth:
-                                  MediaQuery.of(context).size.width * 0.53,
+                              buttonWidth: MediaQuery.of(context).size.width * 0.53,
                               text: 'назад',
-                              onPressed: () => NavigationActions.instance
-                                  .returnToPreviousPage(),
+                              onPressed: () => NavigationActions.instance.returnToPreviousPage(),
                             )
                           : GameButton(
-                              buttonWidth:
-                                  MediaQuery.of(context).size.width * 0.53,
+                              buttonWidth: MediaQuery.of(context).size.width * 0.53,
                               text: 'далі',
                               onPressed: viewModel.newGame,
                             ),

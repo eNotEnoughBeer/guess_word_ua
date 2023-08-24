@@ -35,13 +35,12 @@ class RulesScreen extends StatelessWidget {
       ),
       backgroundColor: backgroundColor,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Вам потрібно відгадати слово з шести спроб.',
-                style: textStyle),
+            Text('Вам потрібно відгадати слово з шести спроб.', style: textStyle),
             Text(
                 'Введіть свою здогадку у рядок ігрового поля, '
                 'після чого отримаєте підказку про те, наскільки близькою '
@@ -59,15 +58,13 @@ class RulesScreen extends StatelessWidget {
                 'Зеленим кольором підсвічуються букви, які вгадано '
                 'точно включаючи їхню позицію в слові.',
                 style: textStyle),
-            Text('Жовтим - ті, що є у слові, але у іншому місці.',
-                style: textStyle),
+            Text('Жовтим - ті, що є у слові, але у іншому місці.', style: textStyle),
             Text('Чорним - ті, яких у слові немає.', style: textStyle),
             const Spacer(),
             Center(
               child: GameButton(
                 text: 'далі',
-                onPressed: () =>
-                    NavigationActions.instance.returnToPreviousPage(),
+                onPressed: () => NavigationActions.instance.returnToPreviousPage(),
               ),
             ),
             const SizedBox(height: 10),

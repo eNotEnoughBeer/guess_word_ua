@@ -1,4 +1,5 @@
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
+import 'package:guess_word_ua/UI/widgets/neumorphic_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../model/virtual_keyboard_model.dart';
@@ -15,41 +16,27 @@ class LetterKey extends StatelessWidget {
     final letter = context.watch<KeyboardKey>();
     return Expanded(
       flex: letter.flex,
-      child: Padding(
-        padding: const EdgeInsets.all(3.0),
-        child: NeumorphicButton(
-          padding: EdgeInsets.zero,
-          onPressed: () {
-            letter.text == null
-                ? letter.onPressed?.call()
-                : letter.onTextInput?.call(letter.text!);
-          },
-          style: NeumorphicStyle(
-            shape: NeumorphicShape.convex,
-            boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(4)),
-            depth: 5,
-            lightSource: LightSource.topLeft,
-            color: letter.color,
-            shadowDarkColor:
-                letter.color == unusedColor ? shadowColor : backgroundColor,
-            shadowLightColor: letter.color == unusedColor
-                ? lightShadowColor
-                : backgroundColor,
-          ),
-          minDistance: -1,
-          child: Center(
-              child: letter.text == null
-                  ? Icon(
-                      letter.iconData,
+      child: NeumorphicButton(
+        padding: EdgeInsets.zero,
+        onPress: () {
+          letter.text == null ? letter.onPressed?.call() : letter.onTextInput?.call(letter.text!);
+        },
+        backgroundColor: letter.color,
+        bottomRightShadowColor: letter.color == unusedColor ? shadowColor : backgroundColor,
+        topLeftShadowColor: letter.color == unusedColor ? lightShadowColor : backgroundColor,
+        borderRadius: 4,
+        child: Center(
+            child: letter.text == null
+                ? Icon(
+                    letter.iconData,
+                    color: Colors.white,
+                    size: fontHeight * 1.2,
+                  )
+                : Text(letter.text!,
+                    style: TextStyle(
                       color: Colors.white,
-                      size: fontHeight * 1.2,
-                    )
-                  : Text(letter.text!,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: fontHeight,
-                      ))),
-        ),
+                      fontSize: fontHeight,
+                    ))),
       ),
     );
   }
