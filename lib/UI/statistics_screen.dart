@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+
 import '../UI/colors_map.dart';
 import '../UI/widgets/back_to_previous_page.dart';
 import '../UI/widgets/game_button.dart';
@@ -87,14 +89,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 borderRadius: BorderRadius.circular(10),
                 color: backgroundColor,
                 boxShadow: const [
-                  BoxShadow(
-                      color: lightShadowColor,
-                      offset: Offset(1, 4),
-                      blurRadius: 3),
-                  BoxShadow(
-                      color: shadowColor,
-                      offset: Offset(-1, -4),
-                      blurRadius: 3),
+                  BoxShadow(color: lightShadowColor, offset: Offset(1, 4), blurRadius: 3),
+                  BoxShadow(color: shadowColor, offset: Offset(-1, -4), blurRadius: 3),
                 ],
               ),
               child: _statisticsGrid(stats.data),
@@ -129,14 +125,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 borderRadius: BorderRadius.circular(10),
                 color: backgroundColor,
                 boxShadow: const [
-                  BoxShadow(
-                      color: lightShadowColor,
-                      offset: Offset(1, 4),
-                      blurRadius: 3),
-                  BoxShadow(
-                      color: shadowColor,
-                      offset: Offset(-1, -4),
-                      blurRadius: 3),
+                  BoxShadow(color: lightShadowColor, offset: Offset(1, 4), blurRadius: 3),
+                  BoxShadow(color: shadowColor, offset: Offset(-1, -4), blurRadius: 3),
                 ],
               ),
               child: _dayGameGrid(dayGameData.statisticsData),
@@ -180,38 +170,27 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             var percent = '';
             var total = '';
             if (e.win != 0 || e.loose != 0) {
-              percent =
-                  '${((e.win / (e.win + e.loose)) * 100).toStringAsFixed(2)}%';
+              percent = '${((e.win / (e.win + e.loose)) * 100).toStringAsFixed(2)}%';
               total = '${e.win + e.loose}';
             }
 
             return TableRow(children: [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
                 child: Center(
                   child: e.level == -1
                       ? const Text('')
-                      : Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text('${e.level}*', style: textStyle)),
+                      : Align(alignment: Alignment.centerLeft, child: Text('${e.level}*', style: textStyle)),
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-                child: Center(
-                    child: e.level == -1
-                        ? Text('Усього', style: textStyle)
-                        : Text(total, style: textStyle)),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                child: Center(child: e.level == -1 ? Text('Усього', style: textStyle) : Text(total, style: textStyle)),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-                child: Center(
-                    child: e.level == -1
-                        ? Text('Успішно', style: textStyle)
-                        : Text(percent, style: textStyle)),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                child:
+                    Center(child: e.level == -1 ? Text('Успішно', style: textStyle) : Text(percent, style: textStyle)),
               ),
             ]);
           }).toList(),
@@ -227,6 +206,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       fontSize: fontHeight,
       fontWeight: FontWeight.bold,
     );
+    var maxWin = data.try1;
+    if (data.try2 > maxWin) maxWin = data.try2;
+    if (data.try3 > maxWin) maxWin = data.try3;
+    if (data.try4 > maxWin) maxWin = data.try4;
+    if (data.try5 > maxWin) maxWin = data.try5;
+    if (data.try6 > maxWin) maxWin = data.try6;
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
@@ -244,12 +229,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             2: FixedColumnWidth(50),
           },
           children: [
-            _oneRowData(1, data.totalPlayed, data.try1, textStyle),
-            _oneRowData(2, data.totalPlayed, data.try2, textStyle),
-            _oneRowData(3, data.totalPlayed, data.try3, textStyle),
-            _oneRowData(4, data.totalPlayed, data.try4, textStyle),
-            _oneRowData(5, data.totalPlayed, data.try5, textStyle),
-            _oneRowData(6, data.totalPlayed, data.try6, textStyle),
+            _oneRowData(1, /*data.totalPlayed*/ maxWin, data.try1, textStyle),
+            _oneRowData(2, maxWin, data.try2, textStyle),
+            _oneRowData(3, maxWin, data.try3, textStyle),
+            _oneRowData(4, maxWin, data.try4, textStyle),
+            _oneRowData(5, maxWin, data.try5, textStyle),
+            _oneRowData(6, maxWin, data.try6, textStyle),
           ],
         ),
       ),
@@ -276,7 +261,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             width: total > 0 ? barMaxWidth * (curWin / total) : 0,
             height: 10,
             color: textColor,
-          ),
+          )
+              .animate(delay: 100.ms)
+              .scaleX(begin: 0, end: 1, duration: 0.4.seconds, curve: Curves.easeInOut, alignment: Alignment.centerLeft)
+              .fadeIn(duration: 0.6.seconds, curve: Curves.easeInOut),
         ),
         Align(
           alignment: Alignment.centerRight,

@@ -12,12 +12,12 @@ class LetterKey extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fontHeight = MediaQuery.of(context).size.width / 20;
+    final fontHeight = MediaQuery.of(context).size.width / 17;
     final letter = context.watch<KeyboardKey>();
     return Expanded(
       flex: letter.flex,
       child: NeumorphicButton(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.all(1),
         onPress: () {
           letter.text == null ? letter.onPressed?.call() : letter.onTextInput?.call(letter.text!);
         },

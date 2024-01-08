@@ -47,7 +47,7 @@ class _ExDialog extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: GameButton(
             buttonWidth: MediaQuery.of(context).size.width * 0.3,
-            text: 'ок',
+            text: 'oк',
             onPressed: () {
               NavigationActions.instance.returnToPreviousPage();
             },

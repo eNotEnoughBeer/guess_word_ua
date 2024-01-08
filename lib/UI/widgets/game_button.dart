@@ -23,13 +23,14 @@ class GameButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final buttonHeight = height ?? MediaQuery.of(context).size.height * 0.08;
     final buttonWidth = width ?? MediaQuery.of(context).size.width * 0.7;
-    final fontHeight = min(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height) / 17;
+    final imagePadding = MediaQuery.of(context).size.width / 45;
+    final fontHeight = min(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height) / 15;
     bool textIsImagePath = text.indexOf('assets/images/') == 0;
     return SizedBox(
       width: buttonWidth,
       height: buttonHeight,
       child: NeumorphicButton(
-        padding: (isBold != null && isBold == true) ? const EdgeInsets.only(bottom: 10.0) : const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(0),
         onPress: onPressed,
         backgroundColor: backgroundColor,
         bottomRightShadowColor: shadowColor,
@@ -37,28 +38,19 @@ class GameButton extends StatelessWidget {
         topLeftOffset: const Offset(-4, -2),
         bottomRightOffset: const Offset(4, 3),
         borderRadius: 100,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            textIsImagePath
-                ? Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Image.asset(text),
-                  )
-                : Padding(
-                    padding: (isBold != null && isBold == true)
-                        ? const EdgeInsets.only(top: 4.0)
-                        : const EdgeInsets.only(bottom: 4),
-                    child: Text(text,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: cardBorder,
-                          fontSize: (isBold != null && isBold == true) ? fontHeight * 1.2 : fontHeight,
-                          fontWeight: (isBold != null && isBold == true) ? FontWeight.bold : FontWeight.normal,
-                        )),
-                  ),
-          ],
+        child: Center(
+          child: textIsImagePath
+              ? Padding(
+                  padding: EdgeInsets.all(imagePadding),
+                  child: Image.asset(text),
+                )
+              : Text(text,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: cardBorder,
+                    fontSize: (isBold != null && isBold == true) ? fontHeight * 1.2 : fontHeight,
+                    fontWeight: (isBold != null && isBold == true) ? FontWeight.bold : FontWeight.normal,
+                  )),
         ),
       ),
     );

@@ -202,6 +202,7 @@ class GameScreen extends StatelessWidget {
                       ),
                       GameButton(
                         buttonWidth: MediaQuery.of(context).size.height * 0.08,
+                        isBoldText: true,
                         text: '?',
                         onPressed: () {
                           showExplanationDialog(

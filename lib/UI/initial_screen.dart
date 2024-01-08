@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_countdown_timer/index.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+
 import '../services/navigation.dart';
 import '../view_model/vm_initial_screen.dart';
 import 'colors_map.dart';
@@ -17,89 +20,135 @@ class InitialScreen extends StatelessWidget {
     );
   }
 
+  Future<String> getAppVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    return packageInfo.version;
+  }
+
   @override
   Widget build(BuildContext context) {
     final double logoSize = MediaQuery.of(context).size.width * 0.6;
+    final fontHeight = MediaQuery.of(context).size.width / 45;
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SafeArea(
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          child: Stack(
             children: [
-              const SizedBox(height: 40),
-              SizedBox(
-                width: logoSize,
-                height: logoSize,
-                child: const Image(
-                    image: AssetImage('assets/images/logo.png'),
-                    fit: BoxFit.fill),
-              ),
-              const Spacer(),
-              const DayGameButton(),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  GameButton(
-                    text: 'assets/images/letter4.png',
-                    buttonWidth: MediaQuery.of(context).size.width * 0.33,
-                    onPressed: () => NavigationActions.instance.onGameStart(4),
-                  ),
+                  const SizedBox(height: 40),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.04,
+                    width: logoSize,
+                    height: logoSize,
+                    child: const Image(image: AssetImage('assets/images/logo.png'), fit: BoxFit.fill),
                   ),
-                  GameButton(
-                    text: 'assets/images/letter5.png',
-                    buttonWidth: MediaQuery.of(context).size.width * 0.33,
-                    onPressed: () => NavigationActions.instance.onGameStart(5),
+                  const Spacer(),
+                  const DayGameButton()
+                      .animate(delay: 200.ms)
+                      .slideY(begin: 0.25, end: 0, duration: 0.2.seconds, curve: Curves.easeInOut)
+                      .fadeIn(duration: 0.2.seconds, curve: Curves.easeInOut),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GameButton(
+                        text: 'assets/images/letter4.png',
+                        buttonWidth: MediaQuery.of(context).size.width * 0.33,
+                        onPressed: () => NavigationActions.instance.onGameStart(4),
+                      )
+                          .animate(delay: 400.ms)
+                          .slideY(begin: 0.25, end: 0, duration: 0.2.seconds, curve: Curves.easeInOut)
+                          .fadeIn(duration: 0.2.seconds, curve: Curves.easeInOut),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.04,
+                      ),
+                      GameButton(
+                        text: 'assets/images/letter5.png',
+                        buttonWidth: MediaQuery.of(context).size.width * 0.33,
+                        onPressed: () => NavigationActions.instance.onGameStart(5),
+                      )
+                          .animate(delay: 600.ms)
+                          .slideY(begin: 0.25, end: 0, duration: 0.2.seconds, curve: Curves.easeInOut)
+                          .fadeIn(duration: 0.2.seconds, curve: Curves.easeInOut),
+                    ],
                   ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GameButton(
+                        text: 'assets/images/letter6.png',
+                        buttonWidth: MediaQuery.of(context).size.width * 0.33,
+                        onPressed: () => NavigationActions.instance.onGameStart(6),
+                      )
+                          .animate(delay: 800.ms)
+                          .slideY(begin: 0.25, end: 0, duration: 0.2.seconds, curve: Curves.easeInOut)
+                          .fadeIn(duration: 0.2.seconds, curve: Curves.easeInOut),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.04,
+                      ),
+                      GameButton(
+                        text: 'assets/images/letter7.png',
+                        buttonWidth: MediaQuery.of(context).size.width * 0.33,
+                        onPressed: () => NavigationActions.instance.onGameStart(7),
+                      )
+                          .animate(delay: 1000.ms)
+                          .slideY(begin: 0.25, end: 0, duration: 0.2.seconds, curve: Curves.easeInOut)
+                          .fadeIn(duration: 0.2.seconds, curve: Curves.easeInOut),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GameButton(
+                        text: 'досягнення',
+                        buttonWidth: MediaQuery.of(context).size.width * 0.53,
+                        onPressed: () => NavigationActions.instance.showStatisticsScreen(),
+                      )
+                          .animate(delay: 1200.ms)
+                          .slideY(begin: 0.25, end: 0, duration: 0.2.seconds, curve: Curves.easeInOut)
+                          .fadeIn(duration: 0.2.seconds, curve: Curves.easeInOut),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.04,
+                      ),
+                      GameButton(
+                        isBoldText: true,
+                        text: '?',
+                        buttonWidth: MediaQuery.of(context).size.height * 0.08,
+                        onPressed: () => NavigationActions.instance.showRulesScreen(),
+                      )
+                          .animate(delay: 1400.ms)
+                          .slideY(begin: 0.25, end: 0, duration: 0.2.seconds, curve: Curves.easeInOut)
+                          .fadeIn(duration: 0.2.seconds, curve: Curves.easeInOut),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GameButton(
-                    text: 'assets/images/letter6.png',
-                    buttonWidth: MediaQuery.of(context).size.width * 0.33,
-                    onPressed: () => NavigationActions.instance.onGameStart(6),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.04,
-                  ),
-                  GameButton(
-                    text: 'assets/images/letter7.png',
-                    buttonWidth: MediaQuery.of(context).size.width * 0.33,
-                    onPressed: () => NavigationActions.instance.onGameStart(7),
-                  ),
-                ],
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: FutureBuilder(
+                    future: getAppVersion(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            'ver: ${snapshot.data}',
+                            style: TextStyle(fontSize: fontHeight, color: cardBorder),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    }),
               ),
-              const SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GameButton(
-                    text: 'досягнення',
-                    buttonWidth: MediaQuery.of(context).size.width * 0.53,
-                    onPressed: () =>
-                        NavigationActions.instance.showStatisticsScreen(),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.04,
-                  ),
-                  GameButton(
-                    text: '?',
-                    buttonWidth: MediaQuery.of(context).size.height * 0.08,
-                    onPressed: () =>
-                        NavigationActions.instance.showRulesScreen(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -133,8 +182,7 @@ class _DayGameButtonState extends State<DayGameButton> {
 
   void initTimer() {
     final now = DateTime.now();
-    final midnight =
-        DateTime(now.year, now.month, now.day).add(const Duration(days: 1));
+    final midnight = DateTime(now.year, now.month, now.day).add(const Duration(days: 1));
     endTime = midnight.millisecondsSinceEpoch;
     controller = CountdownTimerController(endTime: endTime, onEnd: null);
   }
@@ -148,19 +196,13 @@ class _DayGameButtonState extends State<DayGameButton> {
         if (time == null) {
           controller.disposeTimer();
           initTimer();
-          Future.delayed(const Duration(seconds: 1))
-              .then((_) => viewModel.checkAccess());
+          Future.delayed(const Duration(seconds: 1)).then((_) => viewModel.checkAccess());
           controller.start();
         }
 
         DateFormat dateFormat = DateFormat("HH:mm:ss");
-        final timeAsStr = dateFormat.format(DateTime(
-            1997,
-            1,
-            1,
-            time == null ? 0 : time.hours ?? 0,
-            time == null ? 0 : time.min ?? 0,
-            time == null ? 0 : time.sec ?? 0));
+        final timeAsStr = dateFormat.format(DateTime(1997, 1, 1, time == null ? 0 : time.hours ?? 0,
+            time == null ? 0 : time.min ?? 0, time == null ? 0 : time.sec ?? 0));
         return GameButton(
           isBoldText: true,
           text: viewModel.canPlay ? 'гра дня' : timeAsStr,

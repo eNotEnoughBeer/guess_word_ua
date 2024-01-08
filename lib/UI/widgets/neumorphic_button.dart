@@ -82,7 +82,7 @@ class _NeumorphicButtonState extends State<NeumorphicButton> with TickerProvider
           width: widget.width,
           height: widget.height,
           padding: widget.padding ?? const EdgeInsets.all(15),
-          margin: widget.margin ?? const EdgeInsets.all(5),
+          margin: widget.margin ?? const EdgeInsets.all(3),
           decoration: BoxDecoration(
               color: widget.backgroundColor, //containerColor
               borderRadius: BorderRadius.circular(widget.borderRadius ?? 10), //borderRadius
