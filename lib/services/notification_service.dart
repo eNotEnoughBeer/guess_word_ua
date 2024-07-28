@@ -1,20 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 /// ## push-up notifications (it's time to play, new word is waiting for you,...  )
 class NotificationService {
-  static final NotificationService _notificationService = NotificationService._internal();
+  static final NotificationService _notificationService =
+      NotificationService._internal();
   factory NotificationService() {
     return _notificationService;
   }
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   /// ### use it in main() to fill class with initial data.
   Future<void> init() async {
@@ -46,7 +48,7 @@ class NotificationService {
 
     await _cancelAllNotifications(); // cancel previous schedule. we don't need it any more
     tz.initializeTimeZones();
-    final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+    final String timeZoneName = await FlutterTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(timeZoneName));
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -64,13 +66,15 @@ class NotificationService {
           importance: Importance.high,
         )),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime);
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime);
   }
 
   // plans, where and when we need to show next notification
   tz.TZDateTime _nextInstanceOfNotification() {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, 12);
+    tz.TZDateTime scheduledDate =
+        tz.TZDateTime(tz.local, now.year, now.month, now.day, 12);
     // BTW, we NEVER set a schedule for today:
     // if the game is done before today's notify - we don't need in today's notify
     // if the game is done after today's notify - we already saw a notify and don't need it today any more

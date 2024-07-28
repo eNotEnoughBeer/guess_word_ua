@@ -12,7 +12,9 @@ import '../colors_map.dart';
 import 'game_button.dart';
 
 Future<void> showShareDialog(BuildContext context,
-    {required String title, required Uint8List bodyBytes, required int totalTries}) {
+    {required String title,
+    required Uint8List bodyBytes,
+    required int totalTries}) {
   return showDialog<void>(
     context: context,
     builder: (context) => _ShareDialog(
@@ -85,7 +87,8 @@ class _ShareDialog extends StatelessWidget {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                   child: Text(title,
                       style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width / 21,
@@ -110,15 +113,17 @@ class _ShareDialog extends StatelessWidget {
               // don't need in READ_EXTERNAL_STORAGE/WRITE_EXTERNAL_STORAGE
               // cause we work with getTemporaryDirectory (getApplicationSupportDirectory)
               final directory = await getTemporaryDirectory();
-              final imagePath = await File('${directory.path}/game.png').create();
+              final imagePath =
+                  await File('${directory.path}/game.png').create();
 
               controller.capture(pixelRatio: pixelRatio).then((bytes) async {
                 img.Image image = img.decodeImage(bytes!)!;
                 img.Image resized = img.copyResize(image, width: 400);
                 imagePath.writeAsBytesSync(img.encodePng(resized));
-                await Share.shareFiles(
-                  [imagePath.path],
-                  text: 'https://play.google.com/store/apps/details?id=com.gonini.guess_word_ua',
+                await Share.shareXFiles(
+                  [XFile(imagePath.path)],
+                  text:
+                      'https://play.google.com/store/apps/details?id=com.gonini.guess_word_ua',
                 );
                 NavigationActions.instance.returnToPreviousPage();
               });

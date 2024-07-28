@@ -17,13 +17,17 @@ class LetterKey extends StatelessWidget {
     return Expanded(
       flex: letter.flex,
       child: NeumorphicButton(
-        padding: EdgeInsets.all(1),
+        padding: const EdgeInsets.all(1),
         onPress: () {
-          letter.text == null ? letter.onPressed?.call() : letter.onTextInput?.call(letter.text!);
+          letter.text == null
+              ? letter.onPressed?.call()
+              : letter.onTextInput?.call(letter.text!);
         },
         backgroundColor: letter.color,
-        bottomRightShadowColor: letter.color == unusedColor ? shadowColor : backgroundColor,
-        topLeftShadowColor: letter.color == unusedColor ? lightShadowColor : backgroundColor,
+        bottomRightShadowColor:
+            letter.color == unusedColor ? shadowColor : backgroundColor,
+        topLeftShadowColor:
+            letter.color == unusedColor ? lightShadowColor : backgroundColor,
         borderRadius: 4,
         child: Center(
             child: letter.text == null
