@@ -52,22 +52,18 @@ class NotificationService {
     tz.setLocalLocation(tz.getLocation(timeZoneName));
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
-        'guess_word_ua'.hashCode,
-        "Вгадай слово",
-        "Гра дня вже чекає на тебе!",
-        _nextInstanceOfNotification(),
-        const NotificationDetails(
-            android: AndroidNotificationDetails(
-          'Вгадай слово',
-          'Вгадай слово',
-          channelDescription: 'Вгадай слово',
-          playSound: true,
-          priority: Priority.high,
-          importance: Importance.high,
-        )),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
+      'guess_word_ua'.hashCode,
+      "Вгадай слово",
+      "Гра дня вже чекає на тебе!",
+      _nextInstanceOfNotification(),
+      const NotificationDetails(
+          android: AndroidNotificationDetails(
+        'Вгадай слово',
+        'Вгадай слово',
+        channelDescription: 'Вгадай слово',
+      )),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
   }
 
   // plans, where and when we need to show next notification
